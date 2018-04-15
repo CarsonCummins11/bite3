@@ -2,6 +2,8 @@ package org.bitenet.predict.genetic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.bitenet.predict.NDataSet;
 
@@ -30,10 +32,7 @@ public class NPopulation <T extends Member<T>>{
 		for (int i = 0; i < size; i++) {
 			this.popArr.add(new Holder<T>(parent.random(),inDat,outDat));
 		}
-		long strt = System.currentTimeMillis();
-		System.out.println("starting initial score");
 		popArr = sort(popArr);
-		System.out.println("finished initial sort time = "+(System.currentTimeMillis()-strt));
 	}
 
 	/**
@@ -90,37 +89,40 @@ public class NPopulation <T extends Member<T>>{
 			++idx;
 		}
 		System.out.println("breeding/mutation time = " + (System.currentTimeMillis()-strt));
-strt = System.currentTimeMillis();
+		strt = System.currentTimeMillis();
 		// Sort the buffer based on fitness.
 		buffer = sort(buffer);
-		
+		System.out.println("sorting time = " +(System.currentTimeMillis()-strt));
 		// Reset the population
 		popArr = buffer;
 	}
 	
 
 	private ArrayList<Holder<T>> sort(ArrayList<Holder<T>> in) {
-		//score the current population
-				for (int i = 0; i < popArr.size(); i++) {
-					popArr.get(i).score();
-				}
 		Cloner c = new Cloner();
 		ArrayList<Holder<T>> ret = c.deepClone(in);
-	    /*    
-		int n = ret.size();
-	        for (int i = 0; i < n-1; i++) {
-	            for (int j = 0; j < n-i-1; j++) {
-	                if (ret.get(j).getScore() > ret.get(j+1).getScore())
-	                {
-	                    Holder<T> temp = ret.get(j);
-	                    ret.set(j,ret.get(j+1));
-	                    ret.set(j+1,temp);
-	                }
-	            }
-	        }
-	        */
+		ExecutorService es = Executors.newWorkStealingPool();
+		//score the current population
+		for (int i = 0; i < ret.size(); i++) {
+			es.execute(ret.get(i));
+		}
+		while(uncompleteScoring(ret)) {}
+		es.shutdown();
 		Collections.sort(ret);
+		for (int i = 0; i < ret.size(); i++) {
+			System.out.print(ret.get(i).getScore()+",");
+		}
+		System.out.println();
 		return ret;
+	}
+
+	private boolean uncompleteScoring(ArrayList<Holder<T>> ret) {
+		for (int i = 0; i < ret.size(); i++) {
+			if(!ret.get(i).complete) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public ArrayList<Holder<T>> getPopulation() {

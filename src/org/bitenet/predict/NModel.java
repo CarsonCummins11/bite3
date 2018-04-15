@@ -77,17 +77,13 @@ public void randomDimensions(int inSize, int outSize) {
 	}
 	@Override
 	public NModel random() {
-		return new NModel(dimensions[0],dimensions[dimensions.length-1] );
+		return new NModel(dimensions[0],dimensions[dimensions.length-1]);
 	}
 	public double[] calculate(double[] in) {
 		return contained.activate(in);
 	}
 	@Override
 	public double score(NDataSet in, NDataSet goal) {
-		/*
-		contained = NNet.train(in, goal,GENERATIONS , STARTINGPOOL,CROSSOVER,ELITISM,MUTATION, dimensions);
-		return contained.score(in, goal);
-		*/
 		try {
 			contained = new NNet(dimensions);
 			contained.train(in, goal, lr,required_error,max_steps);

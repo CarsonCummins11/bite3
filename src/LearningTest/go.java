@@ -9,13 +9,12 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.bitenet.predict.NDataSet;
 import org.bitenet.predict.NModel;
-import org.bitenet.predict.NNet;
 @SuppressWarnings("serial")
 public class go extends JPanel implements KeyListener, Runnable{
 int y = 0;
@@ -37,39 +36,8 @@ public final static boolean NEURAL_PLAY = true;
 		super();
 		f = new JFrame();
 		if(NEURAL_PLAY) {
-			//get collected data
-			Scanner br = new Scanner(new File("outdat.txt"));
-			ArrayList<double[]> outdat = new ArrayList<>();
-			while(br.hasNextLine()) {
-			String[] inn = br.nextLine().split(",");
-			double[] k = new double[inn.length];
-			for (int i = 0; i < inn.length; i++) {
-				k[i] = Double.parseDouble(inn[i]);
-			}
-			outdat.add(k);
-			}
-			br.close();
-			Scanner brr = new Scanner(new File("outdat.txt"));
-			ArrayList<double[]> indat = new ArrayList<>();
-			while(brr.hasNextLine()) {
-			String[] innn = brr.nextLine().split(",");
-			double[] kk = new double[innn.length];
-			for (int i = 0; i < innn.length; i++) {
-				kk[i] = Double.parseDouble(innn[i]);
-			}
-			indat.add(kk);
-			}
-			brr.close();
-			double[][] intrain = new double[indat.size()][indat.get(0).length];
-			for (int i = 0; i < intrain.length; i++) {
-				intrain[i] = indat.get(i);
-			}
-			double[][] outtrain = new double[outdat.size()][outdat.get(0).length];
-			for (int i = 0; i < outtrain.length; i++) {
-				outtrain[i] = outdat.get(i);
-			}
 			//train from data
-			NModel m = NModel.train(intrain, outtrain, .1);
+			NModel m = NModel.train(new NDataSet(new File("indata.txt")), new NDataSet(new File("outdata.txt")), .1);
 			f.setSize(500,500);
 			f.setLayout(new GridLayout(1,1));
 			f.add(this);

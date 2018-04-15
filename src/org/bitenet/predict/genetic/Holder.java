@@ -6,11 +6,12 @@ import org.bitenet.predict.NDataSet;
 
 import com.rits.cloning.Cloner;
 
-public class Holder<T extends Member<T>> implements Comparable<Holder<T>>{
+public class Holder<T extends Member<T>> implements Comparable<Holder<T>>, Runnable{
 protected T myMem;
 protected double myScore;
 NDataSet inDat;
 NDataSet outDat;
+public boolean complete = false;
 	public Holder( T mem,NDataSet inputs, NDataSet outputs) {
 		myMem = mem;
 		inDat = inputs;
@@ -20,7 +21,6 @@ public T getMember(){
 	return myMem;
 }
 public double getScore() {
-	score();
 	return myScore;
 }
 public ArrayList<Holder<T>> breed(Holder<T> in) {
@@ -48,7 +48,13 @@ public int compareTo(Holder<T> in) {
 	return 0;
 }
 public void score() {
-	myScore = myMem.score(inDat, outDat);
+new Thread(this).start();
 	
+}
+@Override
+public void run() {
+	complete = false;
+	myScore = myMem.score(inDat, outDat);
+	complete = true;
 }
 }

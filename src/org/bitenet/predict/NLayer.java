@@ -13,7 +13,9 @@ NLayer next;
 		for (int i = 0; i < nodes.size(); i++) {
 			for (int j = 0; j < nodes.get(i).weights.length; j++) {
 				double weight = nodes.get(i).weights[j];
+				if(weight!=0||nodes.get(i).value == 0) {
 				next.nodes.get(j).value+=weight*nodes.get(i).value;
+				}
 			}
 		}
 		if(next.next!=null) {

@@ -2,6 +2,7 @@ package LearningTest;
 
 import java.util.Random;
 
+import org.bitenet.predict.NDataSet;
 import org.bitenet.predict.genetic.Member;
 
 public class qm implements Member<qm>{
@@ -35,14 +36,6 @@ String goal;
 		
 	}
 
-	@Override
-	public double score(double[][] in, double[][] gol) {
-		double ret = 0;
-		for (int i = 0; i < goal.length(); i++) {
-			ret += Math.abs(def.charAt(i)-goal.charAt(i));
-		}
-		return ret;
-	}
 
 	@Override
 	public qm random() {
@@ -64,6 +57,15 @@ String goal;
 	public void print() {
 		System.out.println(def);
 		
+	}
+
+	@Override
+	public double score(NDataSet in, NDataSet go) {
+		double ret = 0;
+		for (int i = 0; i < goal.length(); i++) {
+			ret += Math.abs(def.charAt(i)-goal.charAt(i));
+		}
+		return ret;
 	}
 
 }
