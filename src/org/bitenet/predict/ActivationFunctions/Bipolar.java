@@ -7,4 +7,11 @@ public class Bipolar implements NActivationFunction {
 		return in>0?1:-1;
 	}
 
+	@Override
+	public double derivative(double in) {
+		
+		return 0;
+	}
+	
+
 }

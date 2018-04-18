@@ -7,4 +7,9 @@ public class Logit implements NActivationFunction {
 		return Math.log(in/(1-in));
 	}
 
+	@Override
+	public double derivative(double in) {
+		return (1-in)/(Math.pow(in,3));
+	}
+
 }

@@ -7,4 +7,9 @@ public class Identity implements NActivationFunction {
 		return in;
 	}
 
+	@Override
+	public double derivative(double in) {
+		return 1;
+	}
+
 }

@@ -7,4 +7,10 @@ public class Cosine implements NActivationFunction {
 		return Math.cos(in);
 	}
 
+	@Override
+	public double derivative(double in) {
+		return -Math.sin(in);
+	}
+	
+
 }

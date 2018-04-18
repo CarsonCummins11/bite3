@@ -3,13 +3,16 @@ package LearningTest;
 import java.util.Random;
 
 import org.bitenet.predict.NDataSet;
+import org.bitenet.predict.NNet;
 import org.bitenet.predict.genetic.Member;
 
 public class qm implements Member<qm>{
 String def = "";
 String goal;
-	public qm(String gol) {
+NNet fitness;
+	public qm(String gol, NNet fitnessCalc) {
 		goal = gol;
+		fitness = fitnessCalc;
 		def = rString(goal.length());
 	}
 
@@ -28,8 +31,8 @@ String goal;
 		int pivot = rand.nextInt(def.length());
 		String c1 = def.substring(0, pivot) + m.def.substring(pivot);
 		String c2 = m.def.substring(0,pivot) + def.substring(pivot);
-		qm t1 = new qm(goal);
-		qm t2 = new qm(goal);
+		qm t1 = new qm(goal,fitness);
+		qm t2 = new qm(goal,fitness);
 		t1.def = c1;
 		t2.def = c2;
 		return new qm[] {t1,t2};
@@ -39,7 +42,7 @@ String goal;
 
 	@Override
 	public qm random() {
-		return new qm(goal);
+		return new qm(goal,fitness);
 	}
 
 	@Override
@@ -61,11 +64,7 @@ String goal;
 
 	@Override
 	public double score(NDataSet in, NDataSet go) {
-		double ret = 0;
-		for (int i = 0; i < goal.length(); i++) {
-			ret += Math.abs(def.charAt(i)-goal.charAt(i));
-		}
-		return ret;
+		fitness.activate(stringToDouble(def));
 	}
 
 }

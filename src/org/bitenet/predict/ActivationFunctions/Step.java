@@ -6,5 +6,8 @@ public class Step implements NActivationFunction {
 	public double activate(double in) {
 		return in>0?1:0;
 	}
+	public double derivative(double in) {
+		return 0;
+	}
 
 }

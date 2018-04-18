@@ -8,4 +8,9 @@ public class ComplementaryLogLog implements NActivationFunction {
 		return 1-Math.exp(-Math.exp(in));
 	}
 
+	@Override
+	public double derivative(double in) {
+		return Math.exp(-Math.exp(in)+in);
+	}
+
 }

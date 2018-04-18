@@ -7,4 +7,9 @@ public class BipolarSigmoid implements NActivationFunction {
 		return (1-Math.exp(-in))/(1+Math.exp(-in));
 	}
 
+	@Override
+	public double derivative(double in) {
+		return 2*Math.exp(-in)/((1+Math.exp(-2))*(1+Math.exp(-2)));
+	}
+
 }

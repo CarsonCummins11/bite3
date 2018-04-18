@@ -7,4 +7,11 @@ public class Absolute implements NActivationFunction {
 		return Math.abs(in);
 	}
 
+	@Override
+	public double derivative(double in) {
+		
+		return in<0?-1:1;
+	}
+	
+
 }

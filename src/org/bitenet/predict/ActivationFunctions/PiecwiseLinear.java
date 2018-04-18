@@ -8,5 +8,9 @@ public class PiecwiseLinear implements NActivationFunction {
 		if(in>1) return 1;
 		return .5+(.5*in);
 	}
-
+	@Override
+	public double derivative(double in) {
+		if(in<-1||in>1) return 0;
+		return .5;
+	}
 }
