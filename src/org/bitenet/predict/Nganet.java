@@ -51,7 +51,7 @@ public static final String TEMP_DATA_PATH3 = "tempTraining333.txt";
 		}
 		//train discriminator
 		tester.train(new NDataSet(new File(TEMP_DATA_PATH1)), new NDataSet(new File(TEMP_DATA_PATH2)), learning,NModel.required_error, NModel.max_steps);
-		Still have to train them together so leaving this so it causes an error and i know to fix it
+		
 	}
 	private String randCSVDoubles(int size,double max, double min) {
 		String ret = "";

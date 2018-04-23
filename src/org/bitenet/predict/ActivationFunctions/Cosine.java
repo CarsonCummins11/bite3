@@ -1,4 +1,4 @@
-package org.bitenet.predict.ActivationFunctions;
+package org.bitenet.predict.activationfunctions;
 
 public class Cosine implements NActivationFunction {
 

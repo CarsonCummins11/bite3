@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 public class NPoly {
 double[] coes;
 public double MAX_COEFFICIENT;
-public static final double DERIVATIVE_STEP = .00000001;
+public static final double DERIVATIVE_STEP = .00001;
 	public NPoly(int size) {
 		coes = randomCoefficients(size);
 	}

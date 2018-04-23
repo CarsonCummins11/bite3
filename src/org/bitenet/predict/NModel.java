@@ -2,8 +2,12 @@ package org.bitenet.predict;
 
 import java.io.FileNotFoundException;
 
+import org.bitenet.predict.activationfunctions.NActivationFunction;
+import org.bitenet.predict.errorfunctions.NCostFunction;
 import org.bitenet.predict.genetic.Member;
 import org.bitenet.predict.genetic.NEvolutionHandler;
+import org.bitenet.predict.activationfunctions.*;
+import org.bitenet.predict.errorfunctions.*;
 
 public class NModel implements Member<NModel>{
 public static final int MAX_WIDTH = 5;
@@ -17,14 +21,77 @@ public static double required_error = .1;
 public static int max_steps = 1000;
 public int[] dimensions;
 public double lr;
+public NActivationFunction actFunc;
+public NCostFunction costFunc;
 NNet contained;
 	public NModel(int inputSize, int outputSize) {
 		randomDimensions(inputSize,outputSize);
 		lr = Math.random()/4;
+		actFunc = randomActFunc();
+		costFunc = randomCostFunc();
 	}
-	public NModel(int[] dims, double lnr) {
+	public NCostFunction randomCostFunc() {
+		int choice = (int)Math.floor(Math.random()*6);
+		switch(choice) {
+		case 0:
+			return new Bregman();
+		case 1:
+			return new CrossEntropy();
+		case 2:
+			return new Hellinger();
+		case 3:
+			return new ItakuraSaito();
+		case 4:
+			return new KullbackLeibler();
+		case 5:
+			return new Quadratic();
+		default: 
+			return null;
+		}
+		
+	}
+	public NActivationFunction randomActFunc() {
+		int choice = (int)Math.floor(Math.random()*15);
+		switch(choice) {
+		case 0:
+			return new Identity();
+		case 1:
+			return new Step();
+		case 2:
+			return new PiecwiseLinear();
+		case 3:
+			return new Sigmoid();
+		case 4:
+			return new  ComplementaryLogLog();
+		case 5:
+			return new Bipolar();
+		case 6:
+			return new BipolarSigmoid();
+		case 7:
+			return new Tanh();
+		case 8:
+			return new LeCunTanh();
+		case 9:
+			return new HardTanh();
+		case 10:
+			actFunc = new Absolute();
+		case 11:
+			return new Rectifier();
+		case 12:
+			return new SmoothRectifier();
+		case 13:
+			return new Logit();
+		case 14:
+			return new Cosine();
+		default:
+			return null;
+		}
+	}
+	public NModel(int[] dims, double lnr, NActivationFunction af,NCostFunction cf) {
 		dimensions = dims;
 		lr = lnr;
+		actFunc = af;
+		costFunc = cf;
 	}
 public void randomDimensions(int inSize, int outSize) {
 	int len = 2+(int)Math.round(Math.random()*(MAX_WIDTH-2));
@@ -65,8 +132,7 @@ public void randomDimensions(int inSize, int outSize) {
 				ret[i] = m.dimensions[i];
 			}
 		}
-		double lnr = .5<Math.random()?lr:m.lr;
-		return new NModel(ret,lnr);
+		return new NModel(ret,	.5<Math.random()?lr:m.lr,.5<Math.random()?actFunc:m.actFunc,.5<Math.random()?costFunc:m.costFunc);
 	}
 	public static NModel train(NDataSet in, NDataSet goal, double err) throws FileNotFoundException {
 		int inLength = in.nextSet().length;
@@ -85,7 +151,7 @@ public void randomDimensions(int inSize, int outSize) {
 	@Override
 	public double score(NDataSet in, NDataSet goal) {
 		try {
-			contained = new NNet(dimensions);
+			contained = new NNet(dimensions,actFunc,costFunc);
 			contained.train(in, goal, lr,required_error,max_steps);
 			return contained.score(in,goal);
 		} catch (FileNotFoundException e) {
