@@ -16,9 +16,10 @@ public class NNode {
 		myLayer = layerNum;
 		myIndex = layerInd;
 		prev = previous;
-		weights = new double[nextsize];
+		
+		weights = (nextsize==-1?null:new double[nextsize]);
 		//randomize the node on creation
-		for (int i = 0; i < weights.length; i++) {
+		for (int i = 0; i < nextsize; i++) {
 			weights[i] = 200*Math.random()-100;
 		}
 		bias = 200*Math.random()-100;
@@ -31,6 +32,7 @@ public class NNode {
 		weights[at] = set;
 	}
 	public void fire() {
+		//System.out.println("layer num: "+myLayer+" index: "+myIndex+" got fired");
 		int i = 0;
 		for(NNode con : connections) {
 			con.value+=value*weights[i];
@@ -38,80 +40,63 @@ public class NNode {
 		}
 	}
 	public void activation() {
+		//System.out.println("layer num: "+myLayer+" index: "+myIndex+" got activated");
 		value = actFunc.activate(bias+value);
 	}
-	public double backProp(double[] inputs) {
-		//the inside of L (weights*aprev + bias)
+	public double backActivate(double[] inputs) {
+		//calculate the value of any node given input values
 		if(prev!=null) {
 		double sum = 0;
-		for (int i = 0; i < prev.nodes.size(); i++) {
-			NNode cur = prev.nodes.get(i);
-			sum+=cur.weights[myIndex]*cur.backProp(inputs);
+		for (NNode cur : prev.nodes) {
+			sum+=cur.weights[myIndex]*cur.backActivate(inputs);
 		}
-		return sum+bias;
+		return actFunc.activate(sum+bias);
 		}else {
 			return inputs[myIndex];
 		}
 	}
-	public double derivative(NLayer inputLayer, int layerNum, int layerInd, double[] inputs) {
+	public double backActivateOthers(double[] inputs) {
+		//calculate the value of any node given input values
+				if(prev!=null) {
+				double sum = 0;
+				for (NNode cur : prev.nodes) {
+					sum+=cur.weights[myIndex]*cur.backActivate(inputs);
+				}
+				return sum+bias;
+				}else {
+					return inputs[myIndex];
+				}
+	}
+	public double derivative(int layerNum, int layerInd, double[] inputs) {
 		if(layerNum == myLayer&&layerInd == myIndex){
-			double ret = actFunc.derivative(backProp(inputs));
-			inputLayer.reset();
-			return ret;
+			return actFunc.derivative(backActivateOthers(inputs));
 		}else if(prev == null){
-			/*
-			 * This might have to be 0 but idk??
-			 * 
-			 */
-			inputLayer.reset();
-			return inputs[myIndex];
+		return 0;
 		}else {
-			double thisder =  actFunc.derivative(backProp(inputs));
-			double sum = 0;
-			for (int i = 0; i < prev.nodes.size(); i++) {
-				NNode cur = prev.nodes.get(i);
-				sum+=cur.weights[myIndex]*cur.derivative(inputLayer,layerNum, layerInd, inputs);
+			double pderiv = 0;
+			for(NNode c : prev.nodes) {
+				pderiv+=c.weights[myIndex]*c.derivative(layerNum, layerInd, inputs);
 			}
-			return thisder*sum;
+			return actFunc.derivative(backActivateOthers(inputs))*pderiv;
 		}
 	}
-	public double derivative(NLayer inputLayer,int layerNum, int layerInd, int weightNum, double[] inputs) {
+	public double derivative(int layerNum, int layerInd, int weightNum, double[] inputs) {
 		if(layerNum == myLayer&&layerInd == myIndex){
-			double ret =  actFunc.derivative(backProp(inputs))*prev.nodes.get(weightNum).backProp(inputs);
-			inputLayer.reset();
-			return ret;
+		return actFunc.derivative(backActivateOthers(inputs))*prev.nodes.get(weightNum).backActivate(inputs);
 		}else if(prev == null){
-			inputLayer.reset();
-			/*
-			 * This might have to be 0 but idk??
-			 * 
-			 */
-			return inputs[myIndex];
+		return 0;
 		}else {
-			double thisder = actFunc.derivative(backProp(inputs));
-			double sum = 0;
-			for (int i = 0; i < prev.nodes.size(); i++) {
-				NNode cur = prev.nodes.get(i);
-				sum+=cur.weights[myIndex]*cur.derivative(inputLayer,layerNum, layerInd, weightNum, inputs);
+			double pderiv = 0;
+			for(NNode c : prev.nodes) {
+				pderiv+=c.weights[myIndex]*c.derivative(layerNum, layerInd,weightNum,inputs);
 			}
-			return thisder*sum;
+			return actFunc.derivative(backActivateOthers(inputs))*pderiv;
 		}
 	}
-	public void mutate() {
-		boolean mutBias = .1>Math.random();
-		if(mutBias) {
-			bias = Math.random()*(bias*3)-bias;
-		}
-		int mutNum = (int)(Math.random()*weights.length/2);
-		for (int i = 0; i < mutNum; i++) {
-			int mutInd = (int)(Math.random()*weights.length-1);
-			weights[mutInd] = Math.random()*(bias*3)-bias;
-		}
 	
-	}
 	public void print() {
-		System.out.print("bias = "+bias+", # of connections = "+weights.length);
-		for (int i = 0; i < weights.length; i++) {
+		System.out.print("bias = "+bias+", # of connections = "+(connections==null?0:weights.length));
+		for (int i = 0; i < (connections==null?-1:weights.length); i++) {
 			System.out.print(", weights["+i+"] = "+weights[i]);
 		}
 	System.out.println("");

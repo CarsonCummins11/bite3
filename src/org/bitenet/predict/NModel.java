@@ -1,6 +1,7 @@
 package org.bitenet.predict;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import org.bitenet.predict.activationfunctions.NActivationFunction;
 import org.bitenet.predict.errorfunctions.NCostFunction;
@@ -21,13 +22,13 @@ public static double required_error = .1;
 public static int max_steps = 1000;
 public int[] dimensions;
 public double lr;
-public NActivationFunction actFunc;
+public ArrayList<ArrayList<NActivationFunction>> actFunc;
 public NCostFunction costFunc;
 NNet contained;
 	public NModel(int inputSize, int outputSize) {
 		randomDimensions(inputSize,outputSize);
 		lr = Math.random()/4;
-		actFunc = randomActFunc();
+		actFunc = randomActFuncs(dimensions);
 		costFunc = randomCostFunc();
 	}
 	public NCostFunction randomCostFunc() {
@@ -50,7 +51,17 @@ NNet contained;
 		}
 		
 	}
-	public NActivationFunction randomActFunc() {
+	public static ArrayList<ArrayList<NActivationFunction>> randomActFuncs(int[] nums) {
+		ArrayList<ArrayList<NActivationFunction>> ret = new ArrayList<>();
+		for (int i = 0; i < nums.length; i++) {
+			ret.add(new ArrayList<NActivationFunction>());
+			for (int j = 0; j < nums[i]; j++) {
+			ret.get(i).add(randomActFunc());
+			}
+		}
+		return ret;
+	}
+	public static NActivationFunction randomActFunc() {
 		int choice = (int)Math.floor(Math.random()*15);
 		switch(choice) {
 		case 0:
@@ -74,7 +85,7 @@ NNet contained;
 		case 9:
 			return new HardTanh();
 		case 10:
-			actFunc = new Absolute();
+			return new Absolute();
 		case 11:
 			return new Rectifier();
 		case 12:
@@ -87,7 +98,7 @@ NNet contained;
 			return null;
 		}
 	}
-	public NModel(int[] dims, double lnr, NActivationFunction af,NCostFunction cf) {
+	public NModel(int[] dims, double lnr, ArrayList<ArrayList<NActivationFunction>> af,NCostFunction cf) {
 		dimensions = dims;
 		lr = lnr;
 		actFunc = af;
@@ -132,7 +143,19 @@ public void randomDimensions(int inSize, int outSize) {
 				ret[i] = m.dimensions[i];
 			}
 		}
-		return new NModel(ret,	.5<Math.random()?lr:m.lr,.5<Math.random()?actFunc:m.actFunc,.5<Math.random()?costFunc:m.costFunc);
+		double weights= 2*Math.random();
+		ArrayList<ArrayList<NActivationFunction>> af = new ArrayList<>();
+		int ii = 0;
+		for(ArrayList<NActivationFunction> q : actFunc) {
+			af.add(new ArrayList<NActivationFunction>());
+			int jj = 0;
+			for (NActivationFunction r : q) {
+				af.get(ii).add(.5<Math.random()?r:m.actFunc.get(ii).get(jj));
+				jj++;
+			}
+			ii++;
+		}
+		return new NModel(ret,(weights*lr+(2-weights)*lr)/2,af,.5<Math.random()?costFunc:m.costFunc);
 	}
 	public static NModel train(NDataSet in, NDataSet goal, double err) throws FileNotFoundException {
 		int inLength = in.nextSet().length;

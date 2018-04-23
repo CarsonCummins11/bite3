@@ -3,7 +3,7 @@ package org.bitenet.predict;
 import java.util.ArrayList;
 
 public class NLayer {
-	ArrayList<NNode> nodes;
+	public ArrayList<NNode> nodes;
 	NLayer next;
 
 	public NLayer() {
@@ -51,13 +51,6 @@ public class NLayer {
 		}
 	}
 
-	public void mutate() {
-		int mutNum = (int) (Math.random() * nodes.size() / 2);
-		for (int i = 0; i < mutNum; i++) {
-			int mutInd = (int) Math.round(Math.random() * (nodes.size() - 1));
-			nodes.get(mutInd).mutate();
-		}
-	}
 
 	public void print() {
 		for (int i = 0; i < nodes.size(); i++) {
