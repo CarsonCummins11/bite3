@@ -20,6 +20,7 @@ public static float CROSSOVER = 0.8f;
 public static float MUTATION = 0.03f;
 public static double required_error = .1;
 public static int max_steps = 1000;
+public static int MAXEPOCHS = 10;
 public int[] dimensions;
 public double lr;
 public ArrayList<ArrayList<NActivationFunction>> actFunc;
@@ -69,7 +70,7 @@ NNet contained;
 		case 1:
 			return new Step();
 		case 2:
-			return new PiecwiseLinear();
+			return new PiecewiseLinear();
 		case 3:
 			return new Sigmoid();
 		case 4:
@@ -168,14 +169,13 @@ public void randomDimensions(int inSize, int outSize) {
 	public NModel random() {
 		return new NModel(dimensions[0],dimensions[dimensions.length-1]);
 	}
-	public double[] calculate(double[] in) {
+	public double[] activate(double[] in) {
 		return contained.activate(in);
 	}
 	@Override
 	public double score(NDataSet in, NDataSet goal) {
 		try {
-			contained = new NNet(dimensions,actFunc,costFunc);
-			contained.train(in, goal, lr,required_error,max_steps);
+			contained = NNetTrainer.train(in, goal, lr, required_error, max_steps,10, actFunc, costFunc, dimensions);
 			return contained.score(in,goal);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

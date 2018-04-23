@@ -101,28 +101,16 @@ public class NPopulation <T extends Member<T>>{
 	private ArrayList<Holder<T>> sort(ArrayList<Holder<T>> in) {
 		Cloner c = new Cloner();
 		ArrayList<Holder<T>> ret = c.deepClone(in);
-		ExecutorService es = Executors.newWorkStealingPool();
 		//score the current population
 		for (int i = 0; i < ret.size(); i++) {
-			es.execute(ret.get(i));
+			ret.get(i).score();;
 		}
-		while(uncompleteScoring(ret)) {}
-		es.shutdown();
 		Collections.sort(ret);
 		for (int i = 0; i < ret.size(); i++) {
 			System.out.print(ret.get(i).getScore()+",");
 		}
 		System.out.println();
 		return ret;
-	}
-
-	private boolean uncompleteScoring(ArrayList<Holder<T>> ret) {
-		for (int i = 0; i < ret.size(); i++) {
-			if(!ret.get(i).complete) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public ArrayList<Holder<T>> getPopulation() {

@@ -6,7 +6,7 @@ import org.bitenet.predict.NDataSet;
 
 import com.rits.cloning.Cloner;
 
-public class Holder<T extends Member<T>> implements Comparable<Holder<T>>, Runnable{
+public class Holder<T extends Member<T>> implements Comparable<Holder<T>>{
 protected T myMem;
 protected double myScore;
 NDataSet inDat;
@@ -48,13 +48,8 @@ public int compareTo(Holder<T> in) {
 	return 0;
 }
 public void score() {
-new Thread(this).start();
+	myScore = myMem.score(inDat, outDat);
 	
 }
-@Override
-public void run() {
-	complete = false;
-	myScore = myMem.score(inDat, outDat);
-	complete = true;
-}
+
 }

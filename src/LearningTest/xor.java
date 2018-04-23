@@ -6,15 +6,15 @@ import java.io.FileNotFoundException;
 import org.bitenet.predict.NDataSet;
 import org.bitenet.predict.NModel;
 import org.bitenet.predict.NNet;
+import org.bitenet.predict.NNetTrainer;
 import org.bitenet.predict.activationfunctions.*;
 import org.bitenet.predict.errorfunctions.*;
 
 public class xor {
 
 	public xor() throws FileNotFoundException {
-		/*NModel test = new NModel(2,1);
-		test = NModel.train(new double[][] {{1,1},{0,1},{1,0},{0,0}}, new double[][] {{0},{1},{1},{0}} , .1);
-		*/
+		NModel test = new NModel(2,1);
+		test = NModel.train(new NDataSet(new File("inputs.txt")), new NDataSet(new File("outputs.txt")), .1);
 		/*
 		NPoly test = new NPoly(5);
 		try {
@@ -24,7 +24,7 @@ public class xor {
 		}
 		test.print();
 		*/
-		NNet test = NNetTrainer.train(new NDataSet(new File("inputs.txt")), new NDataSet(new File("outputs.txt")), .07, .1,10000, 30,NModel.randomActFuncs(new int[] {2,3,1}), new Quadratic(), new int[] {2,3,1});
+		//NNet test = NNetTrainer.train(new NDataSet(new File("inputs.txt")), new NDataSet(new File("outputs.txt")), .07, .1,10000, 30,Cosine.buildActivationMatrix(new int[] {2,3,1}), new Quadratic(), new int[] {2,3,1});
 		System.out.println("should be 0, actual result is: " + test.activate(new double[]{1,1})[0]);
 		System.out.println("should be 1, actual result is: " + test.activate(new double[]{0,1})[0]);
 		System.out.println("should be 1, actual result is: " + test.activate(new double[]{1,0})[0]);
