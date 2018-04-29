@@ -7,13 +7,18 @@ import org.bitenet.predict.activationfunctions.NActivationFunction;
 import org.bitenet.predict.errorfunctions.NCostFunction;
 
 import com.rits.cloning.Cloner;
-
+/*
+ * Purpose: implementation of Neural Net
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class NNet {
 	NLayer input;
 	public NLayer output;
 	int[] dimensions;
 	NCostFunction costFunc;
-
+	public double testPer;
 	public void prune(double tolerance) {
 		ArrayList<NLayer> ls = input.getLayers(new ArrayList<NLayer>());
 		for (int i = 0; i < ls.size(); i++) {
@@ -28,9 +33,10 @@ public class NNet {
 		}
 	}
 
-	public NNet(int[] layersizes, ArrayList<ArrayList<NActivationFunction>> func, NCostFunction cfunc) {
+	public NNet(int[] layersizes, ArrayList<ArrayList<NActivationFunction>> func, NCostFunction cfunc, double testRetention) {
 		costFunc = cfunc;
 		dimensions = layersizes;
+		testPer = testRetention;
 		// build the net
 		NLayer prevv = null;
 		for (int i = 0; i < layersizes.length; i++) {
@@ -89,7 +95,7 @@ public class NNet {
 	public void train(NDataSet in, NDataSet goal, double learning, double err, int time) throws FileNotFoundException {
 		// get the start time of the training
 		long start = System.currentTimeMillis();
-
+		int size = (int) in.numEntries();
 		// initialize variable to hold the current score
 		double score_cur;
 		double score_last = -1;
@@ -135,7 +141,8 @@ public class NNet {
 
 					// calculate the derivatives at all the input locations
 					// while the input data set has another set of inputs
-					while (in.hasNextSet()) {
+					int qq = 0;
+					while (in.hasNextSet()&&qq<(testPer*size)) {
 
 						// for the output nodes
 						for (int n = 0; n < output.nodes.size(); n++) {
@@ -161,7 +168,8 @@ public class NNet {
 						pDeriv = 0;
 
 						// loop through inputs
-						while (in.hasNextSet()) {
+						qq = 0;
+						while (in.hasNextSet()&&qq<(testPer*size)) {
 
 							// find derivative with respect to each node
 							for (int n = 0; n < output.nodes.size(); n++) {
@@ -195,8 +203,15 @@ public class NNet {
 	}
 
 	private double gradientCost(NDataSet in, NDataSet goal) throws FileNotFoundException {
+		in.reset();
+		goal.reset();
 		double errSum = 0;
 		double i = 0;
+		while(in.hasNextSet()&&i<in.numEntries()*testPer&&i<goal.numEntries()*testPer) {
+			i++;
+			in.nextSet();
+		}
+		i=0;
 		while (in.hasNextSet()) {
 			i++;
 			errSum += gradient(goal.nextSet(), activate(in.nextSet()));

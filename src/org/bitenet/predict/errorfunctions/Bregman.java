@@ -1,5 +1,10 @@
 package org.bitenet.predict.errorfunctions;
-
+/*
+ * Purpose: implementation of bregman cost
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class Bregman implements NCostFunction{
 
 	@Override

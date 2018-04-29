@@ -1,5 +1,10 @@
 package org.bitenet.predict.errorfunctions;
-
+/*
+ * Purpose: This is a quadratic or squared error cost function
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class Quadratic implements NCostFunction{
 	@Override
 	public double error(double[] exp, double[] act) {

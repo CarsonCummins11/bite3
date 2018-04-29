@@ -1,5 +1,10 @@
 package org.bitenet.predict.errorfunctions;
-
+/*
+ * Purpose: implementation of KullbackLeibler cost
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class KullbackLeibler implements NCostFunction{
 
 	@Override

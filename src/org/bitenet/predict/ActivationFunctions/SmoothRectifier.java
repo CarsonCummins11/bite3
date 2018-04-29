@@ -1,7 +1,12 @@
 package org.bitenet.predict.activationfunctions;
 
 import java.util.ArrayList;
-
+/*
+ * Purpose: implementation of Smooth Rectifier activation
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class SmoothRectifier implements NActivationFunction {
 
 	@Override

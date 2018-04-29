@@ -1,7 +1,12 @@
 package org.bitenet.predict.genetic;
 
 import org.bitenet.predict.NDataSet;
-
+/*
+ * Purpose: This runs a genetic algorithm
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class NEvolutionHandler {
 
 public static <T extends Member<T>> T train(NDataSet inDat, NDataSet outDat,int populationSize, int maxGenerations,float crossoverRatio,float elitismRatio,float mutationRatio, double err, T parent){

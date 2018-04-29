@@ -2,7 +2,12 @@ package org.bitenet.predict;
 import java.util.ArrayList;
 
 import org.bitenet.predict.activationfunctions.*;
-
+/*
+ * Purpose: Node for usage in a neural net
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class NNode {
 	double[] weights;
 	double bias;

@@ -15,7 +15,12 @@ import javax.swing.JFrame;
 import javax.swing.JWindow;
 
 import org.bitenet.predict.Predictor;
-
+/*
+ * Purpose: connects client to server
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class Remote implements Runnable {
 public URL server;
 public static final String url = "";

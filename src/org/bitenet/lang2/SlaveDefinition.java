@@ -1,5 +1,10 @@
 package org.bitenet.lang2;
-
+/*
+ * Purpose: definition of function to be executed remotely
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class SlaveDefinition {
 String func;
 Memory m;
@@ -7,13 +12,5 @@ Memory m;
 		func = def;
 		m = nMem;
 		}
-	public Slave buildSlave() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

@@ -13,8 +13,7 @@ import org.bitenet.predict.errorfunctions.*;
 public class xor {
 
 	public xor() throws FileNotFoundException {
-		NModel test = new NModel(2,1);
-		test = NModel.train(new NDataSet(new File("inputs.txt")), new NDataSet(new File("outputs.txt")), .1);
+		NModel test = NModel.train(new NDataSet(new File("inputs.txt")), new NDataSet(new File("outputs.txt")),.1);
 		/*
 		NPoly test = new NPoly(5);
 		try {

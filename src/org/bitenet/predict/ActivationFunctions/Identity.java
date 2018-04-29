@@ -1,7 +1,12 @@
 package org.bitenet.predict.activationfunctions;
 
 import java.util.ArrayList;
-
+/*
+ * Purpose: implementation of Identity activation
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class Identity implements NActivationFunction {
 
 	@Override

@@ -1,5 +1,10 @@
 package org.bitenet.predict.errorfunctions;
-
+/*
+ * Purpose: Implementation of exponential cost function
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class Exponential implements NCostFunction {
 public double tau;
 	public Exponential(double tau) {

@@ -1,6 +1,7 @@
 package org.bitenet.predict;
 
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import org.bitenet.predict.activationfunctions.NActivationFunction;
@@ -9,25 +10,33 @@ import org.bitenet.predict.genetic.Member;
 import org.bitenet.predict.genetic.NEvolutionHandler;
 import org.bitenet.predict.activationfunctions.*;
 import org.bitenet.predict.errorfunctions.*;
-
+/*
+ * Purpose: Implementation of neuroevolution
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class NModel implements Member<NModel>{
-public static final int MAX_WIDTH = 5;
-public static final int MAX_HEIGHT = 5;
 public static int GENERATIONS = 50;
 public static int STARTINGPOOL = 20;
 public static float ELITISM = 0.1f;
 public static float CROSSOVER = 0.8f;
 public static float MUTATION = 0.03f;
-public static double required_error = .1;
 public static int max_steps = 1000;
 public static int MAXEPOCHS = 10;
+public double error;
+int maxHeight;
+int maxWidth;
 public int[] dimensions;
 public double lr;
+public double datRetent;
 public ArrayList<ArrayList<NActivationFunction>> actFunc;
 public NCostFunction costFunc;
 NNet contained;
-	public NModel(int inputSize, int outputSize) {
-		randomDimensions(inputSize,outputSize);
+	public NModel(int inputSize, int outputSize, int maxh, int maxw,double err) {
+		randomDimensions(inputSize,outputSize, maxw, maxw);
+		error = err;
+		datRetent = Math.random();
 		lr = Math.random()/4;
 		actFunc = randomActFuncs(dimensions);
 		costFunc = randomCostFunc();
@@ -99,19 +108,20 @@ NNet contained;
 			return null;
 		}
 	}
-	public NModel(int[] dims, double lnr, ArrayList<ArrayList<NActivationFunction>> af,NCostFunction cf) {
+	public NModel(double datret,int[] dims, double lnr, ArrayList<ArrayList<NActivationFunction>> af,NCostFunction cf) {
 		dimensions = dims;
 		lr = lnr;
+		datRetent = datret;
 		actFunc = af;
 		costFunc = cf;
 	}
-public void randomDimensions(int inSize, int outSize) {
-	int len = 2+(int)Math.round(Math.random()*(MAX_WIDTH-2));
+public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
+	int len = 2+(int)Math.round(Math.random()*(maxw-2));
 	dimensions = new int[len];
 	dimensions[0] = inSize;
 	dimensions[dimensions.length-1] = outSize;
 	for (int i = 1; i < dimensions.length-1; i++) {
-		dimensions[i] = (int)Math.round((Math.random()*MAX_HEIGHT));
+		dimensions[i] = (int)Math.round((Math.random()*maxh));
 	}
 	
 }
@@ -156,18 +166,61 @@ public void randomDimensions(int inSize, int outSize) {
 			}
 			ii++;
 		}
-		return new NModel(ret,(weights*lr+(2-weights)*lr)/2,af,.5<Math.random()?costFunc:m.costFunc);
+		return new NModel((weights*datRetent+(2-weights)*m.datRetent)/2,ret,(weights*lr+(2-weights)*m.lr)/2,af,.5<Math.random()?costFunc:m.costFunc);
 	}
-	public static NModel train(NDataSet in, NDataSet goal, double err) throws FileNotFoundException {
+	public static NModel train(NDataSet in, NDataSet goal) throws FileNotFoundException {
 		int inLength = in.nextSet().length;
 		in.reset();
 		int goalLength = goal.nextSet().length;
 		goal.reset();
-		return NEvolutionHandler.train(in,goal,STARTINGPOOL,GENERATIONS,CROSSOVER,ELITISM,MUTATION,err,new NModel(inLength,goalLength));
+		double err = calcError(goal);
+		return NEvolutionHandler.train(in,goal,STARTINGPOOL,GENERATIONS,CROSSOVER,ELITISM,MUTATION,err,new NModel(inLength,goalLength,calcMaxH(in,goal),calcMaxW(in,goal),err));
+	}
+	private static double calcError(NDataSet goal) throws FileNotFoundException {
+		goal.reset();
+		BigDecimal kk = BigDecimal.ZERO;
+		int k = 0;
+		while(goal.hasNextSet()) {
+			double[] q = goal.nextSet();
+			for (int i = 0; i < q.length; i++) {
+				k++;
+				kk.add(new BigDecimal(q[i]));
+			}
+		}
+		double avg = kk.divide(new BigDecimal(k)).doubleValue();
+		goal.reset();
+		int kkk = 0;
+		while(goal.hasNextSet()) {
+			double[] q = goal.nextSet();
+			for (int i = 0; i < q.length; i++) {
+				kkk+=Math.abs(q[i]-avg);
+			}
+		}
+		return kkk;
+	}
+	private static int calcMaxH(NDataSet in, NDataSet goal) throws FileNotFoundException {
+		in.reset();
+		goal.reset();
+		int insize = in.nextSet().length;
+		in.reset();
+		int outsize = goal.nextSet().length;
+		goal.reset();
+		return insize+outsize;
+	}
+	private static int calcMaxW(NDataSet in, NDataSet goal) throws FileNotFoundException {
+		in.reset();
+		goal.reset();
+		int insize = in.nextSet().length;
+		in.reset();
+		int outsize = goal.nextSet().length;
+		goal.reset();
+		int q = 12*(int) (2+(in.numEntries()/(insize+outsize)));
+		System.out.println("w calc");
+		return q;
 	}
 	@Override
 	public NModel random() {
-		return new NModel(dimensions[0],dimensions[dimensions.length-1]);
+		return new NModel(dimensions[0],dimensions[dimensions.length-1],maxHeight,maxWidth,error);
 	}
 	public double[] activate(double[] in) {
 		return contained.activate(in);
@@ -175,7 +228,7 @@ public void randomDimensions(int inSize, int outSize) {
 	@Override
 	public double score(NDataSet in, NDataSet goal) {
 		try {
-			contained = NNetTrainer.train(in, goal, lr, required_error, max_steps,10, actFunc, costFunc, dimensions);
+			contained = NNetTrainer.train(datRetent,in, goal, lr, error, max_steps,MAXEPOCHS, actFunc, costFunc, dimensions);
 			return contained.score(in,goal);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -188,6 +241,10 @@ public void randomDimensions(int inSize, int outSize) {
 			System.out.print(dimensions[i]+",");
 		}
 		System.out.println();
+	}
+	public static NModel deserialize(String string) {
+
+		return null;
 	}
 
 }

@@ -1,5 +1,10 @@
 package org.bitenet.predict.errorfunctions;
-
+/*
+ * Purpose: Implementation of Hellinger cost function
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class Hellinger implements NCostFunction{
 public static final double LEADING_CO = 1/Math.sqrt(2);
 	@Override

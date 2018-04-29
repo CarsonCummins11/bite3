@@ -1,5 +1,10 @@
 package org.bitenet.predict.errorfunctions;
-
+/*
+ * Purpose: Implementation of ItakuraSaito cost function
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class ItakuraSaito implements NCostFunction {
 
 	@Override

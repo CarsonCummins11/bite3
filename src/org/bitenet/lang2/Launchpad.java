@@ -5,7 +5,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.swing.JFrame;
-
+/*
+ * Purpose: launches the application in the current directory
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class Launchpad implements GraphicUpdater{
 JFrame f;
 Surface s;

@@ -2,13 +2,16 @@ package org.bitenet.predict.genetic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.bitenet.predict.NDataSet;
 
 import com.rits.cloning.Cloner;
-
+/*
+ * Purpose: This handles the implementation of a genetic algorithm
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class NPopulation <T extends Member<T>>{
 
 	/** The size of the tournament. */
@@ -28,6 +31,7 @@ public class NPopulation <T extends Member<T>>{
 		this.inDat = inputs;
 		this.outDat = outputs;
 		// Generate an initial population
+		System.out.println("beginning initial population creation");
 		this.popArr = new ArrayList<Holder<T>>();
 		for (int i = 0; i < size; i++) {
 			this.popArr.add(new Holder<T>(parent.random(),inDat,outDat));
@@ -39,7 +43,6 @@ public class NPopulation <T extends Member<T>>{
 	 * Method used to evolve the population.
 	 */
 	public void evolve() {
-		long strt = System.currentTimeMillis();
 		// Create a buffer for the new generation
 		ArrayList<Holder<T>> buffer = new ArrayList<Holder<T>>();
 		for (int i = 0; i < popArr.size(); i++) {
@@ -85,16 +88,14 @@ public class NPopulation <T extends Member<T>>{
 				}
 			}
 			
-			// Increase our counter
+			// Increase counter
 			++idx;
 		}
-		System.out.println("breeding/mutation time = " + (System.currentTimeMillis()-strt));
-		strt = System.currentTimeMillis();
 		// Sort the buffer based on fitness.
 		buffer = sort(buffer);
-		System.out.println("sorting time = " +(System.currentTimeMillis()-strt));
 		// Reset the population
 		popArr = buffer;
+		System.out.println("1 layer of evolution is complete");
 	}
 	
 

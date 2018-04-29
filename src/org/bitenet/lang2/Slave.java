@@ -9,7 +9,12 @@ import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-
+/*
+ * Purpose: core of BiteNet, runs all code and renders the result
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class Slave implements  KeyListener, MouseMotionListener, MouseListener{
 boolean top;
 Memory m;

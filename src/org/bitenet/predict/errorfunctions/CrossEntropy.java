@@ -1,5 +1,10 @@
 package org.bitenet.predict.errorfunctions;
-
+/*
+ * Purpose: Implementation of cross entropy cost
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class CrossEntropy implements NCostFunction {
 
 	@Override

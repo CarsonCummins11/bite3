@@ -3,10 +3,16 @@ package org.bitenet.predict;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-
+/*
+ * Purpose: way to quickly access data for use in ml
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class NDataSet {
 Scanner in;
 File from;
+private double numEntries = -1;
 	public NDataSet(File f) throws FileNotFoundException {
 	in = new Scanner(f);
 	from = f;
@@ -27,12 +33,16 @@ File from;
 	return max;
 	}
 	public double numEntries() throws FileNotFoundException {
+		return numEntries==-1?numEntriesForced():numEntries;
+	}
+	public double numEntriesForced() throws FileNotFoundException {
 		double ret = 0;
 		reset();
 		while(hasNextSet()) {
 			ret++;
 		}
 		reset();
+		numEntries = ret;
 		return ret;
 	}
 	private double arrMax(double[] nums) {

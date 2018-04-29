@@ -1,7 +1,12 @@
 package org.bitenet.lang2;
 
 import java.util.HashMap;
-
+/*
+ * Purpose: a hashmap which pushes out its oldest members to make room for new ones
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class TimeDecayMap<K,V > {
 HashMap<K,V> mine;
 HashMap<K,Long> timeStamps;

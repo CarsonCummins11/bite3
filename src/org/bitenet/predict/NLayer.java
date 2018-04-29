@@ -1,7 +1,12 @@
 package org.bitenet.predict;
 
 import java.util.ArrayList;
-
+/*
+ * Purpose: Layer for usage in a neural network
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class NLayer {
 	public ArrayList<NNode> nodes;
 	NLayer next;

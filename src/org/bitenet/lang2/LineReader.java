@@ -4,7 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
-
+/*
+ * Purpose: used to read lines of code
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class LineReader {
 String[] lines;
 int pos;

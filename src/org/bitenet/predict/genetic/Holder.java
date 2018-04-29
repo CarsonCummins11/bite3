@@ -5,7 +5,12 @@ import java.util.ArrayList;
 import org.bitenet.predict.NDataSet;
 
 import com.rits.cloning.Cloner;
-
+/*
+ * Purpose: This holds data on a member that is being evolved in a genetic algorithm
+ * 
+ * @author Carson Cummins
+ * @version 0.0
+ */
 public class Holder<T extends Member<T>> implements Comparable<Holder<T>>{
 protected T myMem;
 protected double myScore;
