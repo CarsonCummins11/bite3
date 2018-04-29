@@ -31,7 +31,7 @@ Predictor pred;
 JFrame f;
 public static final String EXECUTION_ID = "EXECUTION_CON";
 	public Remote(JFrame ff) throws IOException{
-		pred = new Predictor(new File("PREDICTOR.p"));
+		pred = new Predictor();
 		server = new URL(url);
 		f = ff;
 		URLConnection con = server.openConnection();
