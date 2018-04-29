@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
@@ -24,20 +26,21 @@ import org.bitenet.predict.Predictor;
 public class Remote implements Runnable {
 public URL server;
 public static final String url = "";
-PrintWriter out;
-BufferedReader in;
+ObjectOutputStream out;
+ObjectInputStream in;
 TimeDecayMap<SlaveDefinition,Memory> predictions;
 Predictor pred;
 JFrame f;
+public static final int WAIT_PERIOD = 5;
 public static final String EXECUTION_ID = "EXECUTION_CON";
 	public Remote(JFrame ff) throws IOException{
 		pred = new Predictor();
 		server = new URL(url);
 		f = ff;
 		URLConnection con = server.openConnection();
-		out = new PrintWriter(con.getOutputStream());
-		out.write(EXECUTION_ID);
-		in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		out = new ObjectOutputStream(con.getOutputStream());
+		out.writeChars(EXECUTION_ID);
+		in = new ObjectInputStream(con.getInputStream());
 	}
 
 	public boolean contains(SlaveDefinition sd) {
@@ -63,16 +66,17 @@ public static final String EXECUTION_ID = "EXECUTION_CON";
 			SlaveDefinition sd = pred.generate(screenShot(f),1)[0];
 			try {
 				predictions.put(sd,execute(sd));
-			} catch (IOException e) {
+				wait(WAIT_PERIOD);
+			} catch (IOException | InterruptedException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
 		
 	}
 
-	private Memory execute(SlaveDefinition sd) throws IOException {
-		out.write(sd.serialize());
-		return Memory.deserialize(in.readLine());
+	private Memory execute(SlaveDefinition sd) throws IOException, ClassNotFoundException {
+		out.writeObject(sd);
+		return (Memory)in.readObject();
 	}
 
 }

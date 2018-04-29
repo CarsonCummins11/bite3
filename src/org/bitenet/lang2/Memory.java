@@ -1,19 +1,17 @@
 package org.bitenet.lang2;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
+import java.io.Serializable;
 /*
  * Purpose: virtual memory used by the bitenet container
  * 
  * @author Carson Cummins
  * @version 0.0
  */
-public class Memory {
+public class Memory implements Serializable{
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4206896067637995935L;
 int[] def;
 	public Memory(int size) {
 		def = new int[size];
@@ -29,34 +27,5 @@ int[] def;
 	}
 	public void set(int pos, int value) {
 		def[pos] = value;
-	}
-	public static Memory deserialize(String s) throws IOException {
-		GZIPInputStream outZip = new GZIPInputStream(new ByteArrayInputStream(s.getBytes("UTF-8")));
-		BufferedReader ret = new BufferedReader(new InputStreamReader(outZip,"UTF-8"));
-		String[] intsStr = ret.readLine().split(",");
-		int[] ints = new int[intsStr.length];
-		for (int i = 0; i < ints.length; i++) {
-			ints[i] = Integer.parseInt(intsStr[i]);
-		}
-		Memory rett = new Memory(ints.length);
-		rett.def = ints;
-		return rett;
-		
-	}
-	public String serialize () throws IOException {
-		String r = toStr();
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		GZIPOutputStream inzip = new GZIPOutputStream(bos);
-		inzip.write(r.getBytes("UTF-8"));
-		inzip.close();
-		return bos.toString("UTF-8");
-	}
-	private String toStr() {
-		String ret = "";
-		for (int i = 0; i < def.length; i++) {
-			ret+=i+",";
-			
-		}
-		return ret;
 	}
 }
