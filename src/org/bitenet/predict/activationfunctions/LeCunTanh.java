@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class LeCunTanh implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5482418557510051971L;
 	@Override
 	public double activate(double in) {
 		return 1.7159*Math.tanh(.6666666666666666666*in);

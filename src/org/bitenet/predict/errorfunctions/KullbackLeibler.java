@@ -7,6 +7,11 @@ package org.bitenet.predict.errorfunctions;
  */
 public class KullbackLeibler implements NCostFunction{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2298460642716140705L;
+
 	@Override
 	public double error(double[] exp, double[] act) {
 		double sum = 0;

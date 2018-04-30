@@ -1,4 +1,4 @@
-package org.bitenet.lang2;
+package org.bitenet.lang;
 
 import java.io.File;
 import java.io.FileNotFoundException;

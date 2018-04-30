@@ -1,6 +1,7 @@
 package org.bitenet.predict;
 
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -16,7 +17,11 @@ import org.bitenet.predict.errorfunctions.*;
  * @author Carson Cummins
  * @version 0.0
  */
-public class NModel implements Member<NModel>{
+public class NModel implements Member<NModel>, Serializable{
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3579686084226103638L;
 public static int GENERATIONS = 50;
 public static int STARTINGPOOL = 20;
 public static float ELITISM = 0.1f;
@@ -241,10 +246,6 @@ public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 			System.out.print(dimensions[i]+",");
 		}
 		System.out.println();
-	}
-	public static NModel deserialize(String string) {
-
-		return null;
 	}
 
 }

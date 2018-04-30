@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class Identity implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9085026953283534750L;
 	@Override
 	public double activate(double in) {
 		return in;

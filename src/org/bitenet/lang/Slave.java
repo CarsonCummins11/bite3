@@ -1,4 +1,4 @@
-package org.bitenet.lang2;
+package org.bitenet.lang;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -8,6 +8,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+
+import org.bitenet.client.Remote;
+import org.bitenet.client.SlaveDefinition;
 
 /*
  * Purpose: core of BiteNet, runs all code and renders the result

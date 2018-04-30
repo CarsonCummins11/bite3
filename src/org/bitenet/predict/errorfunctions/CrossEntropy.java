@@ -7,6 +7,11 @@ package org.bitenet.predict.errorfunctions;
  */
 public class CrossEntropy implements NCostFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8915955859933722739L;
+
 	@Override
 	public double error(double[] exp, double[] act) {
 		double sum = 0;

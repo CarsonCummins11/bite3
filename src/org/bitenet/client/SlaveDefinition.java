@@ -1,6 +1,10 @@
-package org.bitenet.lang2;
+package org.bitenet.client;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
+
+import org.bitenet.lang.Memory;
+import org.bitenet.lang.Slave;
 
 /*
  * Purpose: definition of function to be executed remotely
@@ -19,5 +23,8 @@ Memory m;
 		func = def;
 		m = nMem;
 		}
+	public Memory execute() throws FileNotFoundException {
+		return new Slave(m,false,func,null,null).activate();
+	}
 
 }

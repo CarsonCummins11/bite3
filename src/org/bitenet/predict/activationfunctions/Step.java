@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class Step implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8935377519014848153L;
 	@Override
 	public double activate(double in) {
 		return in>0?1:0;

@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class Absolute implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8180643941939895173L;
 	@Override
 	public double activate(double in) {
 		return Math.abs(in);

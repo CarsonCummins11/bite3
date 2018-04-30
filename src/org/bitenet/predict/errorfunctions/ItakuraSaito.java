@@ -7,6 +7,11 @@ package org.bitenet.predict.errorfunctions;
  */
 public class ItakuraSaito implements NCostFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5298727568415609915L;
+
 	@Override
 	public double error(double[] exp, double[] act) {
 		double sum = 0;

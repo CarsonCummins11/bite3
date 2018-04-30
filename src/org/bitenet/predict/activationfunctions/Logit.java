@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class Logit implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5192516384442437940L;
 	@Override
 	public double activate(double in) {
 		return Math.log(in/(1-in));

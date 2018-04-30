@@ -1,4 +1,5 @@
 package org.bitenet.predict;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.bitenet.predict.activationfunctions.*;
@@ -8,7 +9,11 @@ import org.bitenet.predict.activationfunctions.*;
  * @author Carson Cummins
  * @version 0.0
  */
-public class NNode {
+public class NNode implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7740103266101595487L;
 	double[] weights;
 	double bias;
 	double value = 0;

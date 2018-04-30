@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class ComplementaryLogLog implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -523384523851676148L;
 	@Override
 	public double activate(double in) {
 		

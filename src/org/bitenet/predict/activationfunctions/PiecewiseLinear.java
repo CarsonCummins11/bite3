@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class PiecewiseLinear implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3696950242293507572L;
 	@Override
 	public double activate(double in) {
 		if(in<-1) return 0;

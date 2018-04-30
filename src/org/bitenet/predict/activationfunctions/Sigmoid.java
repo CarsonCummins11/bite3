@@ -8,6 +8,10 @@ import java.util.ArrayList;
  * @version 0.0
  */
 public class Sigmoid implements NActivationFunction {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7091794761541449178L;
 	@Override
 	public double activate(double in) {
 		return 1/(1+Math.exp(-in));

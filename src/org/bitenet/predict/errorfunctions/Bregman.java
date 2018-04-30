@@ -7,6 +7,11 @@ package org.bitenet.predict.errorfunctions;
  */
 public class Bregman implements NCostFunction{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7207416792740861512L;
+
 	@Override
 	public double error(double[] exp, double[] act) {
 		double sum = 0;

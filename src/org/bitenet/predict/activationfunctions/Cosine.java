@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class Cosine implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8827051645845682840L;
 	@Override
 	public double activate(double in) {
 		return Math.cos(in);

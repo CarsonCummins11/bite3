@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class BipolarSigmoid implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8886769462681558325L;
 	@Override
 	public double activate(double in) {
 		return (1-Math.exp(-in))/(1+Math.exp(-in));

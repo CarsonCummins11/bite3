@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class HardTanh implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1180174884063467830L;
 	@Override
 	public double activate(double in) {
 		return Math.max(-1, Math.min(1, in));

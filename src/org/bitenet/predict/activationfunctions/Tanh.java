@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class Tanh implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4970810997084539852L;
 	@Override
 	public double activate(double in) {
 		return Math.tanh(in);

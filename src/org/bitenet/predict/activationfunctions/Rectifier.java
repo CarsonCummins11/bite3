@@ -9,6 +9,10 @@ import java.util.ArrayList;
  */
 public class Rectifier implements NActivationFunction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6320488227237454403L;
 	@Override
 	public double activate(double in) {
 		return Math.max(0,in);

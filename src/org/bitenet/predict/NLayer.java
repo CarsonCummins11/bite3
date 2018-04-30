@@ -1,5 +1,6 @@
 package org.bitenet.predict;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 /*
  * Purpose: Layer for usage in a neural network
@@ -7,7 +8,11 @@ import java.util.ArrayList;
  * @author Carson Cummins
  * @version 0.0
  */
-public class NLayer {
+public class NLayer implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1669888812236033171L;
 	public ArrayList<NNode> nodes;
 	NLayer next;
 

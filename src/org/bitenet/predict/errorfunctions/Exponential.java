@@ -6,6 +6,10 @@ package org.bitenet.predict.errorfunctions;
  * @version 0.0
  */
 public class Exponential implements NCostFunction {
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8326788467173574614L;
 public double tau;
 	public Exponential(double tau) {
 		this.tau = tau;

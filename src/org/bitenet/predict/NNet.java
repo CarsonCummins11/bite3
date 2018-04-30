@@ -1,6 +1,7 @@
 package org.bitenet.predict;
 
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.bitenet.predict.activationfunctions.NActivationFunction;
@@ -13,7 +14,11 @@ import com.rits.cloning.Cloner;
  * @author Carson Cummins
  * @version 0.0
  */
-public class NNet {
+public class NNet implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7580444509262611233L;
 	NLayer input;
 	public NLayer output;
 	int[] dimensions;

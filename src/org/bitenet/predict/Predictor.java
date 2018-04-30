@@ -4,11 +4,17 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
-import org.bitenet.lang2.Memory;
-import org.bitenet.lang2.SlaveDefinition;
+import org.bitenet.client.SlaveDefinition;
+import org.bitenet.lang.Memory;
 
 /*
  * Purpose: usage of ML libraries to apply to overall application
@@ -16,13 +22,14 @@ import org.bitenet.lang2.SlaveDefinition;
  * @author Carson Cummins
  * @version 0.0
  */
-public class Predictor {
+public class Predictor implements Serializable{
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8329351451013861958L;
 public static final int REDUCED_WIDTH = 50;
 public static final int REDUCED_AREA = (int)Math.round(Math.pow(REDUCED_WIDTH, 2));
 public static final String PREDICTOR_PATH = "BN_PL";
-public static final String CLASSIFIER_LABEL = "classifier";
-public static final String PREDICTOR_LABEL = "predictor";
-public static final String ARGUMENT_LABEL = "argument";
 public static final String FILE_ENDER = ".nnet";
 NModel classifier;
 NModel predict;
@@ -30,19 +37,23 @@ HashMap<String,NModel> argBuilder;
 String[] funcs;
 //required confidence for a prediction to be executed
 public static final double REQ_CONF =  .7;
-	public Predictor() {
-		argBuilder = new HashMap<>();
-		classifier = NModel.deserialize(PREDICTOR_PATH+"/"+CLASSIFIER_LABEL+"/"+FILE_ENDER);
-		predict = NModel.deserialize(PREDICTOR_PATH+"/"+PREDICTOR_LABEL+"/"+FILE_ENDER);
-		File[] ff = new File(PREDICTOR_PATH).listFiles();
-		for (int i = 0; i < ff.length; i++) {
-			String[] kk = ff[i].getName().split("_");
-			if(kk.length>1) {
-				if(kk[1].equals(ARGUMENT_LABEL)) {
-					argBuilder.put(ff[i].getName().split(".")[0], NModel.deserialize(ff[i].getAbsolutePath()));
-				}
-			}
+	@SuppressWarnings("resource")
+	public static Predictor build() throws ClassNotFoundException, FileNotFoundException, IOException {
+		Predictor p =  (Predictor)new ObjectInputStream(new FileInputStream(new File(PREDICTOR_PATH+FILE_ENDER))).readObject();
+		p.funcs = buildFunctionOrder();
+		return p;
+	}
+	private static String[] buildFunctionOrder() {
+		File[] fs = new File(System.getProperty("user.dir")).listFiles();
+		String[] names = new String[fs.length];
+		for (int i = 0; i < fs.length; i++) {
+			names[i] = fs[i].getName().split(".")[0];
 		}
+		Arrays.sort(names);
+		return names;
+	}
+	public Predictor(int n) {
+		
 	}
 	public SlaveDefinition[] generate(BufferedImage img, int predictionSize) {
 		double[] input = represent(img);

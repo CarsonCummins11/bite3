@@ -6,6 +6,10 @@ package org.bitenet.predict.errorfunctions;
  * @version 0.0
  */
 public class Hellinger implements NCostFunction{
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8331355842334736805L;
 public static final double LEADING_CO = 1/Math.sqrt(2);
 	@Override
 	public double error(double[] exp, double[] act) {
