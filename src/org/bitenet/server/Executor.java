@@ -1,7 +1,9 @@
 package org.bitenet.server;
 import java.io.FileInputStream;
+import java.net.UnknownHostException;
 import java.security.KeyStore;
- 
+import java.util.Queue;
+
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -11,17 +13,17 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
  
-public class Executor {
+public class Executor implements Runnable{
     private int port = 9999;
     volatile private boolean isServerDone = false;
-     
+     volatile private Queue<TrainingTask> training;
     public static void main(String[] args){
         Executor server = new Executor();
-        server.run();
+        server.go();
     }
      
     Executor(){ 
-    	
+    	new Thread(this).start();
     }
      
     Executor(int port){
@@ -60,7 +62,7 @@ public class Executor {
     }
      
     // Start to run the server
-    public void run(){
+    public void go(){
         SSLContext sslContext = this.createSSLContext();
          
         try{
@@ -75,11 +77,24 @@ public class Executor {
                 SSLSocket sslSocket = (SSLSocket) sslServerSocket.accept();
                  
                 // Start the server thread
-                new ServerThread(sslSocket).start();
+                new ServerThread(sslSocket,training).start();
             }
         } catch (Exception ex){
             ex.printStackTrace();
         }
     }
+
+	@Override
+	public void run() {
+		while(!isServerDone) {
+			try {
+				training.remove().execute();
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
      
 }

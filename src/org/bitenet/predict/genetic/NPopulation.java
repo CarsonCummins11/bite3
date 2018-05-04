@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-import org.bitenet.predict.NDataSet;
+import org.bitenet.predict.data.DataSet;
 
 import com.rits.cloning.Cloner;
 /*
@@ -21,9 +21,9 @@ public class NPopulation <T extends Member<T>>{
 	private float mutation;
 	private float crossover;
 	private ArrayList<Holder<T>> popArr;
-	NDataSet inDat;
-	NDataSet outDat;
-	public NPopulation(int size, float crossoverRatio, float elitismRatio, float mutationRatio, T parent,NDataSet inputs, NDataSet outputs) {
+	DataSet inDat;
+	DataSet outDat;
+	public NPopulation(int size, float crossoverRatio, float elitismRatio, float mutationRatio, T parent,DataSet inputs, DataSet outputs) {
 		
 		this.crossover = crossoverRatio;
 		this.elitism = elitismRatio;

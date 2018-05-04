@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import org.bitenet.predict.activationfunctions.NActivationFunction;
+import org.bitenet.predict.data.DataSet;
 import org.bitenet.predict.errorfunctions.NCostFunction;
 import org.bitenet.predict.genetic.Member;
 import org.bitenet.predict.genetic.NEvolutionHandler;
@@ -173,7 +174,7 @@ public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 		}
 		return new NModel((weights*datRetent+(2-weights)*m.datRetent)/2,ret,(weights*lr+(2-weights)*m.lr)/2,af,.5<Math.random()?costFunc:m.costFunc);
 	}
-	public static NModel train(NDataSet in, NDataSet goal) throws FileNotFoundException {
+	public static NModel train(DataSet in, DataSet goal) throws FileNotFoundException {
 		int inLength = in.nextSet().length;
 		in.reset();
 		int goalLength = goal.nextSet().length;
@@ -181,7 +182,7 @@ public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 		double err = calcError(goal);
 		return NEvolutionHandler.train(in,goal,STARTINGPOOL,GENERATIONS,CROSSOVER,ELITISM,MUTATION,err,new NModel(inLength,goalLength,calcMaxH(in,goal),calcMaxW(in,goal),err));
 	}
-	private static double calcError(NDataSet goal) throws FileNotFoundException {
+	private static double calcError(DataSet goal) throws FileNotFoundException {
 		goal.reset();
 		BigDecimal kk = BigDecimal.ZERO;
 		int k = 0;
@@ -203,7 +204,7 @@ public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 		}
 		return kkk;
 	}
-	private static int calcMaxH(NDataSet in, NDataSet goal) throws FileNotFoundException {
+	private static int calcMaxH(DataSet in, DataSet goal) throws FileNotFoundException {
 		in.reset();
 		goal.reset();
 		int insize = in.nextSet().length;
@@ -212,7 +213,7 @@ public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 		goal.reset();
 		return insize+outsize;
 	}
-	private static int calcMaxW(NDataSet in, NDataSet goal) throws FileNotFoundException {
+	private static int calcMaxW(DataSet in, DataSet goal) throws FileNotFoundException {
 		in.reset();
 		goal.reset();
 		int insize = in.nextSet().length;
@@ -231,7 +232,7 @@ public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 		return contained.activate(in);
 	}
 	@Override
-	public double score(NDataSet in, NDataSet goal) {
+	public double score(DataSet in, DataSet goal) {
 		try {
 			contained = NNetTrainer.train(datRetent,in, goal, lr, error, max_steps,MAXEPOCHS, actFunc, costFunc, dimensions);
 			return contained.score(in,goal);

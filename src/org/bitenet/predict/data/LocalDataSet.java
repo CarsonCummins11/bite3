@@ -1,4 +1,4 @@
-package org.bitenet.predict;
+package org.bitenet.predict.data;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,18 +9,17 @@ import java.util.Scanner;
  * @author Carson Cummins
  * @version 0.0
  */
-public class NDataSet {
+public class LocalDataSet implements DataSet{
 Scanner in;
 File from;
-private double numEntries = -1;
-	public NDataSet(File f) throws FileNotFoundException {
+	public LocalDataSet(File f) throws FileNotFoundException {
 	in = new Scanner(f);
 	from = f;
 	}
 	public boolean hasNextSet() {
 		return in.hasNextLine();
 	}
-	public double max() throws FileNotFoundException {
+	public double max() {
 		reset();
 		double max = -Double.MAX_VALUE;
 		while(hasNextSet()) {
@@ -32,17 +31,13 @@ private double numEntries = -1;
 	reset();
 	return max;
 	}
-	public double numEntries() throws FileNotFoundException {
-		return numEntries==-1?numEntriesForced():numEntries;
-	}
-	public double numEntriesForced() throws FileNotFoundException {
-		double ret = 0;
+	public int numEntries(){
+		int ret = 0;
 		reset();
 		while(hasNextSet()) {
 			ret++;
 		}
 		reset();
-		numEntries = ret;
 		return ret;
 	}
 	private double arrMax(double[] nums) {
@@ -64,13 +59,17 @@ private double numEntries = -1;
 			return null;
 		}
 	}
-	public void reset() throws FileNotFoundException {
-		in = new Scanner(from);
+	public void reset(){
+		try {
+			in = new Scanner(from);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	public String nextString() {
 		return in.nextLine();
 	}
-	public double min() throws FileNotFoundException {
+	public double min(){
 		reset();
 		double min = Double.MAX_VALUE;
 		while(hasNextSet()) {

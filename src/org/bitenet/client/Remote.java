@@ -34,15 +34,24 @@ public class Remote implements Runnable{
     SSLSocket sslSocket;
     TimeDecayMap<SlaveDefinition,Memory> predictions;
     Predictor pred;
-    JFrame f;
+    volatile JFrame f;
     public static final int WAIT_PERIOD = 5;
-     
+    ConnectionShutdown cshut;
+	private BufferedImage curScreen;
+	public final static double DATA_COLLECTION_RATE = .1;
     public Remote(JFrame ff) throws ClassNotFoundException, FileNotFoundException, IOException{
+    	connect();
     	f=ff;
     	pred = Predictor.build();
     	predictions = new TimeDecayMap<>();
+    	Thread qqq = new Thread(cshut);
+    	cshut = new ConnectionShutdown(pred.app_id,qqq,sslSocket);
+    	Runtime.getRuntime().addShutdownHook(qqq);
     }
     public boolean contains(SlaveDefinition sd) {
+    	if(Math.random()<DATA_COLLECTION_RATE) {
+    	cshut.dataAdd(curScreen,sd);
+    	}
 		return predictions.containsKey(sd);
 	}
 
@@ -129,13 +138,16 @@ public class Remote implements Runnable{
                
              in = new ObjectInputStream(inputStream);
               out= new ObjectOutputStream(outputStream);
+              cshut.out = out;
                
               while(true) {
-      			SlaveDefinition sd = pred.generate(screenShot(f),1)[0];
+            	 curScreen = screenShot(f);
+      			SlaveDefinition[] sd = pred.generate(curScreen);
       			try {
-      				predictions.put(sd,execute(sd));
-      				wait(WAIT_PERIOD);
-      			} catch (IOException | InterruptedException | ClassNotFoundException e) {
+      				for (int i = 0; i < sd.length; i++) {
+      					predictions.put(sd[i],execute(sd[i]));	
+					}
+      			} catch (IOException |  ClassNotFoundException e) {
       				e.printStackTrace();
       			}
       		}

@@ -6,15 +6,22 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.apache.commons.io.IOUtils;
 import org.bitenet.client.SlaveDefinition;
 import org.bitenet.lang.Memory;
+import org.bitenet.predict.data.DataSet;
 
 /*
  * Purpose: usage of ML libraries to apply to overall application
@@ -35,13 +42,14 @@ NModel classifier;
 NModel predict;
 HashMap<String,NModel> argBuilder;
 String[] funcs;
+public int app_id;
 //required confidence for a prediction to be executed
-public static final double REQ_CONF =  .7;
+public static final double REQ_CONF =  .95;
+//has to be in top N_LIMIT in order to be executed
+public static final int N_LIMIT = 4;
 	@SuppressWarnings("resource")
 	public static Predictor build() throws ClassNotFoundException, FileNotFoundException, IOException {
-		Predictor p =  (Predictor)new ObjectInputStream(new FileInputStream(new File(PREDICTOR_PATH+FILE_ENDER))).readObject();
-		p.funcs = buildFunctionOrder();
-		return p;
+	return (Predictor)new ObjectInputStream(new FileInputStream(new File(PREDICTOR_PATH+FILE_ENDER))).readObject();
 	}
 	private static String[] buildFunctionOrder() {
 		File[] fs = new File(System.getProperty("user.dir")).listFiles();
@@ -52,10 +60,10 @@ public static final double REQ_CONF =  .7;
 		Arrays.sort(names);
 		return names;
 	}
-	public Predictor(int n) {
+	public Predictor() {
 		
 	}
-	public SlaveDefinition[] generate(BufferedImage img, int predictionSize) {
+	public SlaveDefinition[] generate(BufferedImage img) {
 		double[] input = represent(img);
 		double[] predImage = predict.activate(input);
 		double[] funcPred = classifier.activate(predImage);
@@ -63,8 +71,9 @@ public static final double REQ_CONF =  .7;
 	}
 	private SlaveDefinition[] buildSlaveDefs(double[] funcPred,double[] predImage) {
 		ArrayList<String> funcRet = new ArrayList<>();
+		double nth = getNthHighest(funcPred,N_LIMIT);
 		for (int i = 0; i < funcPred.length; i++) {
-			if(funcPred[i]>REQ_CONF) {
+			if(funcPred[i]>REQ_CONF||funcPred[i]>nth) {
 				funcRet.add(funcs[i]);
 			}
 		}
@@ -73,6 +82,11 @@ public static final double REQ_CONF =  .7;
 			ret.add(new SlaveDefinition(s,new Memory(argBuilder.get(s).activate(predImage))));
 		}
 		return ret.toArray(new SlaveDefinition[ret.size()]);
+	}
+	private double getNthHighest(double[] funcPred, int nLimit) {
+		double[] q = funcPred.clone();
+		Arrays.sort(q);
+		return q[q.length-1-nLimit];
 	}
 	public static BufferedImage toBufferedImage(Image img)
 	{
@@ -93,7 +107,7 @@ public static final double REQ_CONF =  .7;
 	    return bimage;
 	}
 
-	private static BufferedImage reduce(BufferedImage img) {
+	public static BufferedImage reduce(BufferedImage img) {
 		//shrink image
 		Image k = img.getScaledInstance(REDUCED_WIDTH, REDUCED_WIDTH, Image.SCALE_FAST);
 		BufferedImage step1 = toBufferedImage(k);
@@ -120,5 +134,43 @@ public static final double REQ_CONF =  .7;
 			}
 		}
 		return ret;
+	}
+	public static Predictor buildRandom(int app_id) {
+		String[] names = buildFunctionOrder();
+		NModel clas = new NModel(REDUCED_AREA,names.length,3,3,1);
+		NModel pred = new NModel(REDUCED_AREA,REDUCED_AREA,3,3,1);
+		HashMap<String,NModel> argmake = new HashMap<>();
+		for (int i = 0; i < names.length; i++) {
+			argmake.put(names[i], new NModel(REDUCED_AREA,100,3,3,1));
+		}
+		Predictor ret = new Predictor();
+		ret.funcs = names;
+		ret.app_id = app_id;
+		ret.classifier = clas;
+		ret.predict = pred;
+		ret.argBuilder = argmake;
+		return ret;
+	}
+	public static Predictor deserialize(Object o) throws ClassNotFoundException, IOException {
+		String s = (String)o;
+		InputStream is =IOUtils.toInputStream(s,Charset.forName("UTF-8"));
+		return (Predictor)(new ObjectInputStream(is).readObject());
+	}
+	public String serialize() throws IOException {
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("TEMP_12837918BITENET273.temp"));
+        oos.writeObject(this);
+        oos.close();
+        return new String(Files.readAllBytes(new File("TEMP_12837918BITENET273.temp").toPath()));
+	}
+	public void trainClassifier(DataSet inputs, DataSet outputs) {
+		
+		
+	}
+	public void trainPredictor(DataSet series) {
+		
+	}
+	public void trainArgs(HashMap<String,HashMap<DataSet,DataSet>> dat) {
+		
+		
 	}
 }

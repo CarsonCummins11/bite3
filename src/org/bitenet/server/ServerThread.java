@@ -1,17 +1,18 @@
 package org.bitenet.server;
-import java.io.BufferedReader;
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Queue;
 
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 
 import org.bitenet.client.SlaveDefinition;
+import org.bitenet.lang.Memory;
 
 /* 
  * 
@@ -22,11 +23,12 @@ import org.bitenet.client.SlaveDefinition;
  */
    public class ServerThread extends Thread {
         private SSLSocket sslSocket = null;
-         
-        ServerThread(SSLSocket sslSocket){
+         Queue<TrainingTask> tasks;
+        ServerThread(SSLSocket sslSocket,Queue<TrainingTask> tt){
             this.sslSocket = sslSocket;
+            tasks = tt;
         }
-         
+        @SuppressWarnings("unchecked")
         public void run(){
             sslSocket.setEnabledCipherSuites(sslSocket.getSupportedCipherSuites());
              
@@ -44,7 +46,6 @@ import org.bitenet.client.SlaveDefinition;
                 // Start handling application content
                 InputStream inputStream = sslSocket.getInputStream();
                 OutputStream outputStream = sslSocket.getOutputStream();
-                PrintWriter printWriter = new PrintWriter(outputStream);
                 ObjectInputStream in = new ObjectInputStream(inputStream);
                 ObjectOutputStream out = new ObjectOutputStream(outputStream);
                  
@@ -52,12 +53,15 @@ import org.bitenet.client.SlaveDefinition;
                 while((sd = (SlaveDefinition)in.readObject()) != null){
                     out.writeObject(sd.execute());
                 }
-                 
-                // Write data
-                printWriter.print("HTTP/1.1 200\r\n");
-                printWriter.flush();
-                 
+         
+				ArrayList<BufferedImage> ts_dat = (ArrayList<BufferedImage>) in.readObject();
+                HashMap<BufferedImage,String> clas_dat = (HashMap<BufferedImage,String>)in.readObject();
+                HashMap<String,HashMap<BufferedImage,Memory>> arg_dat = (HashMap<String,HashMap<BufferedImage,Memory>>)in.readObject();
+                int app = (Integer)in.readObject();
+                tasks.add(new TrainingTask(app,ts_dat,clas_dat,arg_dat));
+                if(!sslSocket.isClosed()) {
                 sslSocket.close();
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

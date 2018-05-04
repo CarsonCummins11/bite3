@@ -2,7 +2,7 @@ package org.bitenet.predict.genetic;
 
 import java.util.ArrayList;
 
-import org.bitenet.predict.NDataSet;
+import org.bitenet.predict.data.DataSet;
 
 import com.rits.cloning.Cloner;
 /*
@@ -14,10 +14,10 @@ import com.rits.cloning.Cloner;
 public class Holder<T extends Member<T>> implements Comparable<Holder<T>>{
 protected T myMem;
 protected double myScore;
-NDataSet inDat;
-NDataSet outDat;
+DataSet inDat;
+DataSet outDat;
 public boolean complete = false;
-	public Holder( T mem,NDataSet inputs, NDataSet outputs) {
+	public Holder( T mem,DataSet inputs, DataSet outputs) {
 		myMem = mem;
 		inDat = inputs;
 		outDat = outputs;

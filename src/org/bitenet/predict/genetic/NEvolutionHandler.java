@@ -1,6 +1,6 @@
 package org.bitenet.predict.genetic;
 
-import org.bitenet.predict.NDataSet;
+import org.bitenet.predict.data.DataSet;
 /*
  * Purpose: This runs a genetic algorithm
  * 
@@ -9,7 +9,7 @@ import org.bitenet.predict.NDataSet;
  */
 public class NEvolutionHandler {
 
-public static <T extends Member<T>> T train(NDataSet inDat, NDataSet outDat,int populationSize, int maxGenerations,float crossoverRatio,float elitismRatio,float mutationRatio, double err, T parent){
+public static <T extends Member<T>> T train(DataSet inDat, DataSet outDat,int populationSize, int maxGenerations,float crossoverRatio,float elitismRatio,float mutationRatio, double err, T parent){
 	NPopulation<T> pop = new NPopulation<>(populationSize, crossoverRatio, elitismRatio, mutationRatio,parent,inDat,outDat);
 
 	// Start evolving the population, stopping when the maximum number of

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.bitenet.predict.activationfunctions.NActivationFunction;
+import org.bitenet.predict.data.DataSet;
 import org.bitenet.predict.errorfunctions.NCostFunction;
 
 import com.rits.cloning.Cloner;
@@ -97,7 +98,7 @@ public class NNet implements Serializable{
 		return ret;
 	}
 
-	public void train(NDataSet in, NDataSet goal, double learning, double err, int time) throws FileNotFoundException {
+	public void train(DataSet in, DataSet goal, double learning, double err, int time) throws FileNotFoundException {
 		// get the start time of the training
 		long start = System.currentTimeMillis();
 		int size = (int) in.numEntries();
@@ -207,7 +208,7 @@ public class NNet implements Serializable{
 		}
 	}
 
-	private double gradientCost(NDataSet in, NDataSet goal) throws FileNotFoundException {
+	private double gradientCost(DataSet in, DataSet goal) throws FileNotFoundException {
 		in.reset();
 		goal.reset();
 		double errSum = 0;
@@ -234,7 +235,7 @@ public class NNet implements Serializable{
 		return costFunc.gradient(goal, pred);
 	}
 
-	public double score(NDataSet in, NDataSet goal) throws FileNotFoundException {
+	public double score(DataSet in, DataSet goal) throws FileNotFoundException {
 		double errSum = 0;
 		double i = 0;
 		while (in.hasNextSet()) {

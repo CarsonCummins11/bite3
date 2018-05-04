@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import org.bitenet.predict.activationfunctions.NActivationFunction;
+import org.bitenet.predict.data.DataSet;
 import org.bitenet.predict.errorfunctions.NCostFunction;
 /*
  * Purpose: This trains a neural network
@@ -12,7 +13,7 @@ import org.bitenet.predict.errorfunctions.NCostFunction;
  * @version 0.0
  */
 public class NNetTrainer {
-public static NNet train(double dataUsage,NDataSet in, NDataSet goal, double learning, double err, int time, int maxepochs, ArrayList<ArrayList<NActivationFunction>> actfunc, NCostFunction cf, int[] dims) throws FileNotFoundException {
+public static NNet train(double dataUsage,DataSet in, DataSet goal, double learning, double err, int time, int maxepochs, ArrayList<ArrayList<NActivationFunction>> actfunc, NCostFunction cf, int[] dims) throws FileNotFoundException {
 	int i = 0;
 	double error = Double.MAX_VALUE;
 	NNet cur = null;
