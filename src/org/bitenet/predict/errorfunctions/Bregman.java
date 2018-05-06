@@ -24,7 +24,7 @@ public class Bregman implements NCostFunction{
 		for (int i = 0; i < act.length; i++) {
 			sum+=act[i];
 		}
-		return sum;
+		return sum/exp.length;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class Bregman implements NCostFunction{
 		for (int i = 0; i < act.length; i++) {
 			sum+=((act[i]-exp[i])/act[i]);
 		}
-		return sum;
+		return sum/exp.length;
 	}
 
 }

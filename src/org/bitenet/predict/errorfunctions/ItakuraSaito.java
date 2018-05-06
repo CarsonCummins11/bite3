@@ -19,7 +19,7 @@ public class ItakuraSaito implements NCostFunction {
 			double div = exp[i]/act[i];
 			sum+=(div-Math.log(div)-1);
 		}
-		return sum;
+		return sum/exp.length;
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class ItakuraSaito implements NCostFunction {
 		for (int i = 0; i < act.length; i++) {
 			sum+=(act[i]-exp[i])/Math.pow(act[i], 2);
 		}
-		return sum;
+		return sum/exp.length;
 	}
 
 

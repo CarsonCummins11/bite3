@@ -18,7 +18,7 @@ public class KullbackLeibler implements NCostFunction{
 		for (int i = 0; i < act.length; i++) {
 			sum+=exp[i]*Math.log(exp[i]/act[i]);
 		}
-		return sum;
+		return sum/exp.length;
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class KullbackLeibler implements NCostFunction{
 		for (int i = 0; i < act.length; i++) {
 			sum+=-exp[i]/act[i];
 		}
-		return sum;
+		return sum/exp.length;
 	}
 
 }

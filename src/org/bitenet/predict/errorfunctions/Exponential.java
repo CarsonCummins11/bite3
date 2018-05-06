@@ -21,7 +21,7 @@ public double tau;
 				sum+=Math.pow(exp[i]-act[i],2);
 			}
 		sum = tau*Math.exp((1/tau)*sum);
-		return sum;
+		return sum/exp.length;
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public double tau;
 		for (int i = 0; i < act.length; i++) {
 			summ+=tt*(act[i]-exp[i]);
 		}
-		return sum*summ;
+		return (sum*summ)/exp.length;
 	}
 
 
