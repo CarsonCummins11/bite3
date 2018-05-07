@@ -3,25 +3,23 @@ package org.bitenet.predict;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.bitenet.client.SlaveDefinition;
 import org.bitenet.lang.Memory;
-import org.bitenet.predict.data.DataSet;
+
+import com.mongodb.MongoClient;
 
 /*
  * Purpose: usage of ML libraries to apply to overall application
@@ -50,15 +48,6 @@ public static final int N_LIMIT = 4;
 	@SuppressWarnings("resource")
 	public static Predictor build() throws ClassNotFoundException, FileNotFoundException, IOException {
 	return (Predictor)new ObjectInputStream(new FileInputStream(new File(PREDICTOR_PATH+FILE_ENDER))).readObject();
-	}
-	private static String[] buildFunctionOrder() {
-		File[] fs = new File(System.getProperty("user.dir")).listFiles();
-		String[] names = new String[fs.length];
-		for (int i = 0; i < fs.length; i++) {
-			names[i] = fs[i].getName().split(".")[0];
-		}
-		Arrays.sort(names);
-		return names;
 	}
 	public Predictor() {
 		
@@ -135,8 +124,7 @@ public static final int N_LIMIT = 4;
 		}
 		return ret;
 	}
-	public static Predictor buildRandom(int app_id) {
-		String[] names = buildFunctionOrder();
+	public static Predictor buildRandom(int app_id,String[] names) {
 		NModel clas = new NModel(REDUCED_AREA,names.length,3,3,1);
 		NModel pred = new NModel(REDUCED_AREA,REDUCED_AREA,3,3,1);
 		HashMap<String,NModel> argmake = new HashMap<>();
@@ -151,25 +139,20 @@ public static final int N_LIMIT = 4;
 		ret.argBuilder = argmake;
 		return ret;
 	}
-	public static Predictor deserialize(Object o) throws ClassNotFoundException, IOException {
-		String s = (String)o;
-		InputStream is =IOUtils.toInputStream(s,Charset.forName("UTF-8"));
-		return (Predictor)(new ObjectInputStream(is).readObject());
+	public static Predictor deserialize(String s) throws ClassNotFoundException, IOException {
+		 ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(s.getBytes()));
+		 Object o  = ois.readObject();
+		 ois.close();
+		 return (Predictor)o;
 	}
 	public String serialize() throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("TEMP_12837918BITENET273.temp"));
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(this);
         oos.close();
-        return new String(Files.readAllBytes(new File("TEMP_12837918BITENET273.temp").toPath()));
+        return new String(baos.toByteArray());
 	}
-	public void trainClassifier(DataSet inputs, DataSet outputs) {
-		
-		
-	}
-	public void trainPredictor(DataSet series) {
-		
-	}
-	public void trainArgs(HashMap<String,HashMap<DataSet,DataSet>> dat) {
+	public void train(MongoClient c, int id) {
 		
 		
 	}

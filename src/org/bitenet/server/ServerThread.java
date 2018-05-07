@@ -1,18 +1,14 @@
 package org.bitenet.server;
-import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Queue;
+import java.util.Stack;
 
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 
 import org.bitenet.client.SlaveDefinition;
-import org.bitenet.lang.Memory;
 
 /* 
  * 
@@ -23,12 +19,11 @@ import org.bitenet.lang.Memory;
  */
    public class ServerThread extends Thread {
         private SSLSocket sslSocket = null;
-         Queue<TrainingTask> tasks;
-        ServerThread(SSLSocket sslSocket,Queue<TrainingTask> tt){
+         Stack<TrainingTask> tasks;
+        ServerThread(SSLSocket sslSocket,Stack<TrainingTask> training){
             this.sslSocket = sslSocket;
-            tasks = tt;
+            tasks = training;
         }
-        @SuppressWarnings("unchecked")
         public void run(){
             sslSocket.setEnabledCipherSuites(sslSocket.getSupportedCipherSuites());
              
@@ -54,11 +49,7 @@ import org.bitenet.lang.Memory;
                     out.writeObject(sd.execute());
                 }
          
-				ArrayList<BufferedImage> ts_dat = (ArrayList<BufferedImage>) in.readObject();
-                HashMap<BufferedImage,String> clas_dat = (HashMap<BufferedImage,String>)in.readObject();
-                HashMap<String,HashMap<BufferedImage,Memory>> arg_dat = (HashMap<String,HashMap<BufferedImage,Memory>>)in.readObject();
-                int app = (Integer)in.readObject();
-                tasks.add(new TrainingTask(app,ts_dat,clas_dat,arg_dat));
+				tasks.push((TrainingTask)in.readObject());
                 if(!sslSocket.isClosed()) {
                 sslSocket.close();
                 }

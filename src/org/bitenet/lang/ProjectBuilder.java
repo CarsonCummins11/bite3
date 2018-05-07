@@ -8,25 +8,16 @@ import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.Arrays;
 
 import org.bitenet.predict.Predictor;
-import org.bitenet.predict.data.MongoDataSet;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 
 public class ProjectBuilder {
 public static final String LAUNCHPAD_LOCATION = "www.bitenet.org/launchpad.jar";
 	@SuppressWarnings("resource")
 	public ProjectBuilder(int app_id) throws FileNotFoundException, IOException {
 		//build a randomly generated predictor for the current project
-		Predictor p = Predictor.buildRandom(app_id);
-		//upload predictor to mongo db
-		MongoClient mc = new MongoClient(new MongoClientURI(MongoDataSet.MONGO_URL));
-		DBCollection dat = mc.getDB(MongoDataSet.DATABASE_NAME).getCollection(MongoDataSet.PREDICTOR_COLLECTION);
-		dat.insert(new BasicDBObject(MongoDataSet.PREDICTOR_ID_SIGNIFIER,Integer.toString(app_id)).append(MongoDataSet.DATA_NAME, p.serialize()));
+		Predictor p = Predictor.buildRandom(app_id,nameOrd());
 		//write predictor to file
 		new ObjectOutputStream(new FileOutputStream(new File(Predictor.PREDICTOR_PATH+Predictor.FILE_ENDER))).writeObject(p);
 		//download latest release of download latest release of launchpad and put it into the project
@@ -43,6 +34,15 @@ public static final String LAUNCHPAD_LOCATION = "www.bitenet.org/launchpad.jar";
 			e.printStackTrace();
 		}
 
+	}
+	public String[] nameOrd(){
+		File[] fs = new File(System.getProperty("user.dir")).listFiles();
+		String[] names = new String[fs.length];
+		for (int i = 0; i < fs.length; i++) {
+			names[i] = fs[i].getName().split(".")[0];
+		}
+		Arrays.sort(names);
+		return names;
 	}
 
 }

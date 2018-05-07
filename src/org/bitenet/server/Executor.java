@@ -1,8 +1,10 @@
 package org.bitenet.server;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.security.KeyStore;
-import java.util.Queue;
+import java.util.LinkedList;
+import java.util.Stack;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -12,18 +14,30 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
  
 public class Executor implements Runnable{
     private int port = 9999;
+    MongoClient mc;
+    public static final String MONGO_URL = "";
     volatile private boolean isServerDone = false;
-     volatile private Queue<TrainingTask> training;
+     volatile private Stack<TrainingTask> training;
     public static void main(String[] args){
-        Executor server = new Executor();
-        server.go();
+    	try {
+			new Executor(MONGO_URL);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
      
-    Executor(){ 
+    Executor(String url) throws UnknownHostException{
+    	training = new Stack<>();
+    	mc = new MongoClient(new MongoClientURI(url));
     	new Thread(this).start();
+    	go();
     }
      
     Executor(int port){
@@ -88,8 +102,8 @@ public class Executor implements Runnable{
 	public void run() {
 		while(!isServerDone) {
 			try {
-				training.remove().execute();
-			} catch (UnknownHostException e) {
+				training.pop().execute(mc);
+			} catch (ClassNotFoundException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

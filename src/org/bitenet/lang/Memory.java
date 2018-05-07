@@ -1,6 +1,12 @@
 package org.bitenet.lang;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
 /*
  * Purpose: virtual memory used by the bitenet container
  * 
@@ -27,5 +33,18 @@ int[] def;
 	}
 	public void set(int pos, int value) {
 		def[pos] = value;
+	}
+	public static Memory deserialize(String s) throws ClassNotFoundException, IOException {
+		 ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(s.getBytes()));
+		 Object o  = ois.readObject();
+		 ois.close();
+		 return (Memory)o;
+	}
+	public String serialize() throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+       ObjectOutputStream oos = new ObjectOutputStream(baos);
+       oos.writeObject(this);
+       oos.close();
+       return new String(baos.toByteArray());
 	}
 }

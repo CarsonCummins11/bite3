@@ -8,17 +8,13 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
 public class MongoDataSet implements DataSet{
-	public static final String MONGO_URL = "";
-	public static final String DATABASE_NAME = "BiteNet";
-	public static final String TRAINING_COLLECTION = "Training";
 	public static final String DATA_NAME = "data";
-	public static final String PREDICTOR_COLLECTION = "Predictor";
 	public static final String PREDICTOR_ID_SIGNIFIER = "_ID";
 	private DBCollection dat;
 	private DBCursor curs;
-	public MongoDataSet(int id) throws UnknownHostException {
-		MongoClient mc = new MongoClient(new MongoClientURI(MONGO_URL));
-		dat = mc.getDB(DATABASE_NAME).getCollection(TRAINING_COLLECTION+id);
+	public MongoDataSet(String database_name, String collection_name, String mongo_url) throws UnknownHostException {
+		MongoClient mc = new MongoClient(new MongoClientURI(mongo_url));
+		dat = mc.getDB(database_name).getCollection(collection_name);
 		curs = dat.find();
 	}
 
@@ -62,7 +58,12 @@ public class MongoDataSet implements DataSet{
 	}
 
 	private double[] toDoubleArray(Object o) {
-		return (double[])o;
+		String[] k = ((String)o).split(",");
+		double[] ret = new double[k.length];
+		for (int i = 0; i < k.length; i++) {
+			ret[i] = Double.parseDouble(k[i]);
+		}
+		return ret;
 	}
 	private double arrMin(double[] nums) {
 		double min = Double.MAX_VALUE;
