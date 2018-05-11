@@ -9,13 +9,14 @@ import org.bitenet.predict.data.DataSet;
 import org.bitenet.predict.errorfunctions.NCostFunction;
 
 import com.rits.cloning.Cloner;
+
 /*
  * Purpose: implementation of Neural Net
  * 
  * @author Carson Cummins
  * @version 0.0
  */
-public class NNet implements Serializable{
+public class NNet implements Serializable {
 	/**
 	 * 
 	 */
@@ -25,6 +26,7 @@ public class NNet implements Serializable{
 	int[] dimensions;
 	NCostFunction costFunc;
 	public double testPer;
+
 	public void prune(double tolerance) {
 		ArrayList<NLayer> ls = input.getLayers(new ArrayList<NLayer>());
 		for (int i = 0; i < ls.size(); i++) {
@@ -39,7 +41,8 @@ public class NNet implements Serializable{
 		}
 	}
 
-	public NNet(int[] layersizes, ArrayList<ArrayList<NActivationFunction>> func, NCostFunction cfunc, double testRetention) {
+	public NNet(int[] layersizes, ArrayList<ArrayList<NActivationFunction>> func, NCostFunction cfunc,
+			double testRetention) {
 		costFunc = cfunc;
 		dimensions = layersizes;
 		testPer = testRetention;
@@ -101,7 +104,7 @@ public class NNet implements Serializable{
 	public void train(DataSet in, DataSet goal, double learning, double err, int time) throws FileNotFoundException {
 		// get the start time of the training
 		long start = System.currentTimeMillis();
-		int size = (int) in.numEntries();
+		// int size = (int) in.numEntries();
 		// initialize variable to hold the current score
 		double score_cur;
 		double score_last = -1;
@@ -115,7 +118,7 @@ public class NNet implements Serializable{
 				break;
 			}
 			// output the current score
-			System.out.println("score = " + score_cur);
+			//System.out.println("score = " + score_cur);
 
 			// calculate the score using the gradient of the cost function
 			double gScore = gradientCost(in, goal);
@@ -147,8 +150,8 @@ public class NNet implements Serializable{
 
 					// calculate the derivatives at all the input locations
 					// while the input data set has another set of inputs
-					int qq = 0;
-					while (in.hasNextSet()&&qq<(testPer*size)) {
+					// int qq = 0;
+					while (in.hasNextSet()/* &&qq<(testPer*size) */) {
 
 						// for the output nodes
 						for (int n = 0; n < output.nodes.size(); n++) {
@@ -166,22 +169,23 @@ public class NNet implements Serializable{
 
 					// do gradient descent
 					toad.bias = nodes.get(j).bias - (learning * pDeriv);
-
+					// add in the newly calculated node
+					nns.get(nns.size() - 1).add(toad);
 					// loop through all the weights
-					for (int k = 0; k < (j - 1 > 0 ? nodes.get(j - 1).weights.length : 0); k++) {
+					for (int k = 0; k < (i-1<0?0:lays.get(i-1).nodes.size()); k++) {
 
 						// reset pderiv
 						pDeriv = 0;
 
 						// loop through inputs
-						qq = 0;
-						while (in.hasNextSet()&&qq<(testPer*size)) {
+						// qq = 0;
+						while (in.hasNextSet()/* &&qq<(testPer*size) */) {
 
 							// find derivative with respect to each node
 							for (int n = 0; n < output.nodes.size(); n++) {
 
 								// add derivative of each node to pderiv
-								pDeriv += output.nodes.get(n).derivative(toad.myLayer, toad.myIndex, k, in.nextSet());
+								pDeriv += output.nodes.get(n).derivative(toad.myLayer, toad.myIndex, k,in.nextSet());
 							}
 						}
 
@@ -190,13 +194,8 @@ public class NNet implements Serializable{
 
 						// reset the database
 						in.reset();
-
-						// do gradient descent
-						toad.weights[k] = nodes.get(j).weights[k] - (learning * pDeriv);
+						nns.get(nns.size()-2).get(k).weights[toad.myIndex] = nns.get(nns.size()-2).get(k).weights[toad.myIndex] - (learning*pDeriv);
 					}
-
-					// add in the newly calculated node
-					nns.get(nns.size() - 1).add(toad);
 				}
 			}
 
@@ -213,11 +212,11 @@ public class NNet implements Serializable{
 		goal.reset();
 		double errSum = 0;
 		double i = 0;
-		while(in.hasNextSet()&&i<in.numEntries()*testPer&&i<goal.numEntries()*testPer) {
+		while (in.hasNextSet() && i < in.numEntries() * testPer && i < goal.numEntries() * testPer) {
 			i++;
 			in.nextSet();
 		}
-		i=0;
+		i = 0;
 		while (in.hasNextSet()) {
 			i++;
 			errSum += gradient(goal.nextSet(), activate(in.nextSet()));

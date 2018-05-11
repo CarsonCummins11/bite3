@@ -22,11 +22,15 @@ public static NNet train(double dataUsage,DataSet in, DataSet goal, double learn
 	cur = new NNet(dims,actfunc,cf,dataUsage);
 	cur.train(in, goal, learning, err, time);
 	double q = cur.score(in, goal);
+	cur.print();
+	System.out.println(q+"      "+cf.getClass().getSimpleName());
+	if(!Double.toString(q).equals("NaN")) {
 	if(error>q) {
 		best = cur;
 		error = q;
 	}
-	i++;
+	}
+	++i;
 	}
 	return best;
 }

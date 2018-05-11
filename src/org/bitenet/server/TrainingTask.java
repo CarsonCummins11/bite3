@@ -55,9 +55,13 @@ public class TrainingTask implements Serializable{
 	public ArrayList<DBObject> DBConvertClass(){
 		ArrayList<DBObject> ret = new ArrayList<>();
 		for (BufferedImage b : clas_dat.keySet()) {
-			ret.add(new BasicDBObject(MongoDataSet.DATA_NAME,clas_dat.get(b)));
+			ret.add(new BasicDBObject(MongoDataSet.DATA_NAME,buildDoubleArrayfrom(clas_dat.get(b))));
 		}
 		return ret;
+	}
+	private String buildDoubleArrayfrom(String s) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	public ArrayList<DBObject> DBConvertArg(String key) throws IOException{
 		ArrayList<DBObject> ret = new ArrayList<>();

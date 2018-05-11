@@ -90,15 +90,15 @@ public class NNode implements Serializable{
 			return actFunc.derivative(backActivateOthers(inputs))*pderiv;
 		}
 	}
-	public double derivative(int layerNum, int layerInd, int weightNum, double[] inputs) {
+	public double derivative(int layerNum, int layerInd, int connectedInd, double[] inputs) {
 		if(layerNum == myLayer&&layerInd == myIndex){
-		return actFunc.derivative(backActivateOthers(inputs))*prev.nodes.get(weightNum).backActivate(inputs);
+		return actFunc.derivative(backActivateOthers(inputs))*prev.nodes.get(connectedInd).backActivate(inputs);
 		}else if(prev == null){
 		return 0;
 		}else {
 			double pderiv = 0;
 			for(NNode c : prev.nodes) {
-				pderiv+=c.weights[myIndex]*c.derivative(layerNum, layerInd,weightNum,inputs);
+				pderiv+=c.weights[myIndex]*c.derivative(layerNum, layerInd,connectedInd,inputs);
 			}
 			return actFunc.derivative(backActivateOthers(inputs))*pderiv;
 		}
@@ -109,6 +109,6 @@ public class NNode implements Serializable{
 		for (int i = 0; i < (connections==null?-1:weights.length); i++) {
 			System.out.print(", weights["+i+"] = "+weights[i]);
 		}
-	System.out.println("");
+	System.out.println("Activation: "+actFunc.getClass().getSimpleName());
 	}
 }

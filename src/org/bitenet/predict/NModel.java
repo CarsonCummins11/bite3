@@ -35,20 +35,22 @@ int maxHeight;
 int maxWidth;
 public int[] dimensions;
 public double lr;
-public double datRetent;
+//public double datRetent;
 public ArrayList<ArrayList<NActivationFunction>> actFunc;
 public NCostFunction costFunc;
 NNet contained;
 	public NModel(int inputSize, int outputSize, int maxh, int maxw,double err) {
-		randomDimensions(inputSize,outputSize, maxw, maxw);
+		maxHeight = maxh;
+		maxWidth = maxw;
+		randomDimensions(inputSize,outputSize, maxw, maxh);
 		error = err;
-		datRetent = Math.random();
-		lr = Math.random()/4;
+		//datRetent = Math.random();
+		lr = .04;//Math.random()/4;
 		actFunc = randomActFuncs(dimensions);
 		costFunc = randomCostFunc();
 	}
 	public NCostFunction randomCostFunc() {
-		int choice = (int)Math.floor(Math.random()*6);
+		int choice = 5;//(int)Math.floor(Math.random()*6);
 		switch(choice) {
 		case 0:
 			return new Bregman();
@@ -114,15 +116,16 @@ NNet contained;
 			return null;
 		}
 	}
-	public NModel(double datret,int[] dims, double lnr, ArrayList<ArrayList<NActivationFunction>> af,NCostFunction cf) {
+	public NModel(/*double datret,*/int[] dims, double lnr, ArrayList<ArrayList<NActivationFunction>> af,NCostFunction cf) {
 		dimensions = dims;
 		lr = lnr;
-		datRetent = datret;
+		//datRetent = datret;
 		actFunc = af;
 		costFunc = cf;
 	}
 public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 	int len = 2+(int)Math.round(Math.random()*(maxw-2));
+	System.out.println("dim = "+len+"maxw = "+maxw);
 	dimensions = new int[len];
 	dimensions[0] = inSize;
 	dimensions[dimensions.length-1] = outSize;
@@ -138,6 +141,16 @@ public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 		if(.9<Math.random()) {
 			if(lr>.01) {
 			lr+=(Math.random()*.02)-.01;
+			}
+		}
+		if(.9<Math.random()) {
+			costFunc = randomCostFunc();
+		}
+		for (ArrayList<NActivationFunction> a : actFunc) {
+			for (NActivationFunction n : a) {
+				if(.97 < Math.random()) {
+					n = randomActFunc();
+				}
 			}
 		}
 	}
@@ -162,25 +175,36 @@ public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 		}
 		double weights= 2*Math.random();
 		ArrayList<ArrayList<NActivationFunction>> af = new ArrayList<>();
-		int ii = 0;
-		for(ArrayList<NActivationFunction> q : actFunc) {
-			af.add(new ArrayList<NActivationFunction>());
-			int jj = 0;
-			for (NActivationFunction r : q) {
-				af.get(ii).add(.5<Math.random()?r:m.actFunc.get(ii).get(jj));
-				jj++;
+		for (int i = 0; i < ret.length; i++) {
+			af.add(new ArrayList<>());
+			for (int j = 0; j < ret[i]; j++) {
+				NActivationFunction act;
+				if(i<actFunc.size()&&i<m.actFunc.size()) {
+					if(j<actFunc.get(i).size()&&j<m.actFunc.get(i).size()) {
+						act = Math.random()<.5?actFunc.get(i).get(j):m.actFunc.get(i).get(j);
+					}else if(j<actFunc.get(i).size()) {
+						act = actFunc.get(i).get(j);
+					}else {
+						act = m.actFunc.get(i).get(j);
+					}
+				}else if(i<actFunc.size()) {
+					act = actFunc.get(i).get(j);
+				}else {
+					act = m.actFunc.get(i).get(j);
+				}
+				af.get(i).add(act);
 			}
-			ii++;
 		}
-		return new NModel((weights*datRetent+(2-weights)*m.datRetent)/2,ret,(weights*lr+(2-weights)*m.lr)/2,af,.5<Math.random()?costFunc:m.costFunc);
+		return new NModel(/*(weights*datRetent+(2-weights)*m.datRetent)/2,*/ret,(weights*lr+(2-weights)*m.lr)/2,af,.5<Math.random()?costFunc:m.costFunc);
 	}
-	public static NModel train(DataSet in, DataSet goal) throws FileNotFoundException {
+	public static NModel train(DataSet in, DataSet goal,double error) throws FileNotFoundException {
 		int inLength = in.nextSet().length;
 		in.reset();
 		int goalLength = goal.nextSet().length;
 		goal.reset();
-		double err = calcError(goal);
-		return NEvolutionHandler.train(in,goal,STARTINGPOOL,GENERATIONS,CROSSOVER,ELITISM,MUTATION,err,new NModel(inLength,goalLength,calcMaxH(in,goal),calcMaxW(in,goal),err));
+		//double error = calcError(goal);
+		System.out.println("starting train");
+		return NEvolutionHandler.train(in,goal,STARTINGPOOL,GENERATIONS,CROSSOVER,ELITISM,MUTATION,error,new NModel(inLength,goalLength,calcMaxH(in,goal),calcMaxW(in,goal),error));
 	}
 	private static double calcError(DataSet goal) throws FileNotFoundException {
 		goal.reset();
@@ -211,7 +235,7 @@ public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 		in.reset();
 		int outsize = goal.nextSet().length;
 		goal.reset();
-		return insize+outsize;
+		return 1+insize+outsize;
 	}
 	private static int calcMaxW(DataSet in, DataSet goal) throws FileNotFoundException {
 		in.reset();
@@ -220,8 +244,7 @@ public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 		in.reset();
 		int outsize = goal.nextSet().length;
 		goal.reset();
-		int q = 12*(int) (2+(in.numEntries()/(insize+outsize)));
-		System.out.println("w calc");
+		int q = 5*(int) (2+(in.numEntries()/(insize+outsize)));
 		return q;
 	}
 	@Override
@@ -234,8 +257,8 @@ public void randomDimensions(int inSize, int outSize,int maxw, int maxh) {
 	@Override
 	public double score(DataSet in, DataSet goal) {
 		try {
-			contained = NNetTrainer.train(datRetent,in, goal, lr, error, max_steps,MAXEPOCHS, actFunc, costFunc, dimensions);
-			return contained.score(in,goal);
+			contained = NNetTrainer.train(1,in, goal, lr, error, max_steps,MAXEPOCHS, actFunc, costFunc, dimensions);
+			return contained==null?Double.MAX_VALUE:contained.score(in,goal);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return -1;

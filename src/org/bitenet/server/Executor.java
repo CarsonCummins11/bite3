@@ -3,7 +3,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.security.KeyStore;
-import java.util.LinkedList;
 import java.util.Stack;
 
 import javax.net.ssl.KeyManager;
@@ -29,7 +28,7 @@ public class Executor implements Runnable{
 			new Executor(MONGO_URL);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
     }
      

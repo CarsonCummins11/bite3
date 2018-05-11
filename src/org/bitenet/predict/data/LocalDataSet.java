@@ -1,7 +1,11 @@
 package org.bitenet.predict.data;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Scanner;
 /*
  * Purpose: way to quickly access data for use in ml
@@ -31,14 +35,38 @@ File from;
 	reset();
 	return max;
 	}
+	public static int countLines(String filename) throws IOException {
+	    InputStream is = new BufferedInputStream(new FileInputStream(filename));
+	    try {
+	        byte[] c = new byte[1024];
+	        int count = 0;
+	        int readChars = 0;
+	        boolean empty = true;
+	        while ((readChars = is.read(c)) != -1) {
+	            empty = false;
+	            for (int i = 0; i < readChars; ++i) {
+	                if (c[i] == '\n') {
+	                    ++count;
+	                }
+	            }
+	        }
+	        return (count == 0 && !empty) ? 1 : count;
+	    } finally {
+	        is.close();
+	    }
+	}
 	public int numEntries(){
-		int ret = 0;
-		reset();
-		while(hasNextSet()) {
-			ret++;
+		in.close();
+		try {
+			int ret = countLines(from.getAbsolutePath());
+			reset();
+			return ret;
+		} catch (IOException e) {
+			reset();
+			e.printStackTrace();
+			return -1;
+		
 		}
-		reset();
-		return ret;
 	}
 	private double arrMax(double[] nums) {
 		double max = -Double.MAX_VALUE;
@@ -61,6 +89,7 @@ File from;
 	}
 	public void reset(){
 		try {
+			in.close();
 			in = new Scanner(from);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
